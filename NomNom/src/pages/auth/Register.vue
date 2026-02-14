@@ -115,20 +115,14 @@ const handleRegister = async () => {
   loading.value = true;
 
   try {
-    const response = await apiClient.post('/api/v1/auth/register', {
+    const response = await apiClient.post('/accounts/', {
       name: formData.value.name,
       email: formData.value.email,
       password: formData.value.password
     });
 
-    success.value = 'Conta criada com sucesso! Redirecionando...';
+    success.value = 'Conta criada com sucesso! Faça login para continuar.';
     
-    // Salvar token se retornado
-    if (response.data.session?.access_token) {
-      localStorage.setItem('access_token', response.data.session.access_token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
-    }
-
     // Redirecionar para login após 2 segundos
     setTimeout(() => {
       router.push('/login');

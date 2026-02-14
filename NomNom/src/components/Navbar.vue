@@ -67,7 +67,11 @@ onMounted(() => {
   window.addEventListener('storage', checkAuth);
 });
 
+<<<<<<< Updated upstream
 // Monitorar mudanças de rota para atualizar autenticação
+=======
+// Recheck auth when route changes
+>>>>>>> Stashed changes
 watch(() => route.path, () => {
   checkAuth();
 });
