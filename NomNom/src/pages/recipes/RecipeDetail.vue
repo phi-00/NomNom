@@ -131,7 +131,7 @@ onMounted(async () => {
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
 }
 
