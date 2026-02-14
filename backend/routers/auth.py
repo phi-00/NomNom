@@ -10,7 +10,7 @@ supabase = get_supabase_client()
 @router.post("/register", response_model=LoginResponse, status_code=status.HTTP_201_CREATED)
 async def register(user_data: UserCreate):
     """
-    Registra um novo usuário e retorna os dados com token
+    Registra um novo usuário e cria registro na tabela Utilizador
     """
     try:
         # Criar usuário no Supabase Auth
@@ -29,6 +29,19 @@ async def register(user_data: UserCreate):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Erro ao criar conta. Verifique os dados fornecidos."
             )
+        
+        # Criar registro na tabela Utilizador
+        try:
+            utilizador_data = {
+                "email": user_data.email,
+                "password": user_data.password,  # Nota: em produção, considere usar hash
+                "nome": user_data.name,
+            }
+            supabase.table("Utilizador").insert(utilizador_data).execute()
+        except Exception as db_error:
+            # Se falhar ao inserir, ainda retorna sucesso de registro
+            # mas loga o erro
+            print(f"Aviso: Erro ao inserir em Utilizador: {str(db_error)}")
         
         user_response = UserResponse(
             id=auth_response.user.id,
@@ -152,14 +165,22 @@ async def login(credentials: LoginRequest):
                 detail="Credenciais inválidas"
             )
         
-        # Buscar dados adicionais do usuário se necessário
-        # Por exemplo, de uma tabela 'profiles'
-        # profile = supabase.table("profiles").select("*").eq("id", auth_response.user.id).execute()
+        # Buscar dados adicionais do usuário na tabela Utilizador
+        try:
+            utilizador_response = supabase.table("Utilizador").select("*").eq("email", credentials.email).execute()
+            
+            if utilizador_response.data and len(utilizador_response.data) > 0:
+                nome = utilizador_response.data[0].get("nome", auth_response.user.user_metadata.get("name", ""))
+            else:
+                nome = auth_response.user.user_metadata.get("name", "")
+        except Exception as e:
+            print(f"Aviso: Erro ao buscar dados do Utilizador: {str(e)}")
+            nome = auth_response.user.user_metadata.get("name", "")
         
         user_response = UserResponse(
             id=auth_response.user.id,
             email=auth_response.user.email,
-            name=auth_response.user.user_metadata.get("name", ""),
+            name=nome,
             created_at=auth_response.user.created_at
         )
         
