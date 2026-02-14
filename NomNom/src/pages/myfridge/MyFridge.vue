@@ -73,7 +73,29 @@
   max-width: 1400px;
   margin: 0 auto;
   font-family: 'Nunito Sans';
+  background: #ffffff;
 }
+
+.card {
+  background: #ffffff !important;
+}
+
+:deep(.p-tabs) {
+  background: #ffffff !important;
+}
+
+:deep(.p-tabs .p-tablist) {
+  background: #ffffff !important;
+}
+
+:deep(.p-tabs .p-tabpanels) {
+  background: #ffffff !important;
+}
+
+:deep(.p-tabpanel) {
+  background: #ffffff !important;
+}
+
 h1 {
   color: #1ab394;
 }
