@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar">
     <div class="navbar-group">
-      <img src="/vite.svg" alt="Logo" class="logo" />
+      <img src="/logo_white_bg.png" alt="Logo" class="logo" />
       <div class="navbar-links">
         <router-link to="/" class="nav-link">Home</router-link>
         <template v-if="isAuthenticated">
