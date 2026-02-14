@@ -9,13 +9,12 @@
           <router-link to="/myfridge" class="nav-link">MyFridge</router-link>
           <router-link to="/shoppinglist" class="nav-link">ShoppingList</router-link>
           <router-link to="/ingredientes" class="nav-link">Ingredientes</router-link>
-          <router-link to="/profile" class="nav-link">Profile</router-link>
         </template>
       </div>
     </div>
     <div class="navbar-auth">
       <template v-if="isAuthenticated">
-        <span class="user-name">👤 {{ userName }}</span>
+        <router-link to="/profile" class="user-name">👤 {{ userName }}</router-link>
         <button @click="handleLogout" class="btn-logout">Sair</button>
       </template>
       <template v-else>
@@ -123,7 +122,7 @@ watch(() => route.path, () => {
 
 .navbar-auth {
   display: flex;
-  gap: 1rem;
+  gap: 2rem;
   align-items: center;
 }
 
@@ -131,6 +130,13 @@ watch(() => route.path, () => {
   color: #333;
   font-weight: 600;
   font-size: 0.95rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.user-name:hover {
+  color: #1ab394;
 }
 
 .btn-logout {
