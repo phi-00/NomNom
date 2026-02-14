@@ -89,6 +89,8 @@ onMounted(() => {
   max-width: 1200px;
   margin: 0 auto;
   font-family: 'Nunito Sans', sans-serif;
+  background: var(--bg-card);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .header {
@@ -97,13 +99,13 @@ onMounted(() => {
 }
 
 .header h1 {
-  color: #333;
+  color: #ffffff;
   font-size: 2rem;
   margin: 0 0 0.5rem 0;
 }
 
 .subtitle {
-  color: #666;
+  color: #b0b0b0;
   font-size: 1rem;
   margin: 0;
 }
@@ -142,7 +144,7 @@ onMounted(() => {
 .loading-state p,
 .error-state p,
 .empty-state p {
-  color: #666;
+  color: #b0b0b0;
   font-size: 1rem;
 }
 
@@ -153,21 +155,22 @@ onMounted(() => {
 
 .error-state h2,
 .empty-state h2 {
-  color: #333;
+  color: #ffffff;
   margin: 0;
 }
 
 .hint {
-  background: #f0f7ff;
+  background: rgba(26, 179, 148, 0.1);
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #667eea;
+  border-left: 4px solid #1ab394;
   margin-top: 1rem;
   font-weight: 500;
+  color: #b0b0b0;
 }
 
 .retry-button {
-  background: #667eea;
+  background: #1ab394;
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -178,7 +181,7 @@ onMounted(() => {
 }
 
 .retry-button:hover {
-  background: #5568d3;
+  background: #15976d;
 }
 
 /* Estado de Sucesso */
@@ -198,7 +201,7 @@ onMounted(() => {
 }
 
 .info-box {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
   padding: 1rem;
   border-radius: 8px;
@@ -207,6 +210,7 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   gap: 1rem;
+  box-shadow: 0 4px 15px rgba(26, 179, 148, 0.3);
 }
 
 .info-label {
@@ -240,8 +244,8 @@ onMounted(() => {
 }
 
 .ingrediente-card {
-  background: white;
-  border: 2px solid #e0e0e0;
+  background: #1a1a1a;
+  border: 2px solid rgba(26, 179, 148, 0.3);
   border-radius: 8px;
   padding: 1rem;
   text-align: center;
@@ -250,16 +254,17 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 .ingrediente-card:hover {
-  border-color: #667eea;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  border-color: #1ab394;
+  box-shadow: 0 4px 12px rgba(26, 179, 148, 0.2);
   transform: translateY(-2px);
 }
 
 .ingrediente-number {
-  background: #f0f0f0;
+  background: rgba(26, 179, 148, 0.15);
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -267,7 +272,7 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   font-weight: bold;
-  color: #667eea;
+  color: #1ab394;
   font-size: 0.9rem;
 }
 
@@ -277,7 +282,7 @@ onMounted(() => {
 
 .ingrediente-content h3 {
   margin: 0 0 0.5rem 0;
-  color: #333;
+  color: #ffffff;
   font-size: 1rem;
   word-break: break-word;
 }
@@ -317,14 +322,14 @@ onMounted(() => {
 table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
+  background: #1a1a1a;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
 }
 
 thead {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
 }
 
 thead th {
@@ -336,12 +341,12 @@ thead th {
 }
 
 tbody tr {
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid rgba(26, 179, 148, 0.15);
   transition: background 0.2s;
 }
 
 tbody tr:hover {
-  background: #f9f9f9;
+  background: rgba(26, 179, 148, 0.05);
 }
 
 tbody tr:last-child {
@@ -350,19 +355,19 @@ tbody tr:last-child {
 
 td {
   padding: 1rem;
-  color: #333;
+  color: #e0e0e0;
 }
 
 .index-cell {
   font-weight: 600;
-  color: #667eea;
+  color: #1ab394;
   width: 50px;
   text-align: center;
 }
 
 .nome-cell {
   font-weight: 500;
-  color: #333;
+  color: #e0e0e0;
   font-size: 1rem;
 }
 
