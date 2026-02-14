@@ -7,6 +7,64 @@ router = APIRouter()
 supabase = get_supabase_client()
 
 
+@router.post("/register", response_model=LoginResponse, status_code=status.HTTP_201_CREATED)
+async def register(user_data: UserCreate):
+    """
+    Registra um novo usuário e retorna os dados com token
+    """
+    try:
+        # Criar usuário no Supabase Auth
+        auth_response = supabase.auth.sign_up({
+            "email": user_data.email,
+            "password": user_data.password,
+            "options": {
+                "data": {
+                    "name": user_data.name,
+                }
+            }
+        })
+        
+        if not auth_response.user:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Erro ao criar conta. Verifique os dados fornecidos."
+            )
+        
+        user_response = UserResponse(
+            id=auth_response.user.id,
+            email=auth_response.user.email,
+            name=user_data.name,
+            created_at=auth_response.user.created_at
+        )
+        
+        return LoginResponse(
+            user=user_response,
+            session={
+                "access_token": auth_response.session.access_token if auth_response.session else "",
+                "refresh_token": auth_response.session.refresh_token if auth_response.session else "",
+                "expires_in": auth_response.session.expires_in if auth_response.session else 0,
+                "token_type": auth_response.session.token_type if auth_response.session else "bearer"
+            },
+            message="Conta criada com sucesso"
+        )
+        
+    except AuthApiError as e:
+        if "already registered" in str(e).lower():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Este email já está registrado."
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Erro de autenticação: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao criar conta: {str(e)}"
+        )
+
+
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def create_account(user_data: UserCreate):
     """

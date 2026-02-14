@@ -7,21 +7,40 @@ import MyFridge from './pages/myfridge/MyFridge.vue'
 import ShoppingList from './pages/shoppinglist/ShoppingList.vue'
 import Profile from './pages/user_profile/Profile.vue'
 import IngredientsColumns from './pages/IngredientsColumns.vue'
+import Login from './pages/auth/Login.vue'
+import Register from './pages/auth/Register.vue'
 
 const routes = [
-  { path: '/', name: 'Home', component: Home },
-  { path: '/recipes', name: 'Recipes', component: Recipes },
-  { path: '/recipes/myrecipes', name: 'MyRecipes', component: MyRecipes },
-  { path: '/recipes/otherrecipes', name: 'OtherRecipes', component: OtherRecipes },
-  { path: '/myfridge', name: 'MyFridge', component: MyFridge },
-  { path: '/shoppinglist', name: 'ShoppingList', component: ShoppingList },
-  { path: '/profile', name: 'Profile', component: Profile },
-  { path: '/ingredientes', name: 'IngredientsColumns', component: IngredientsColumns },
+  { path: '/', name: 'Home', component: Home, meta: { requiresAuth: false } },
+  { path: '/login', name: 'Login', component: Login, meta: { requiresAuth: false } },
+  { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false } },
+  { path: '/recipes', name: 'Recipes', component: Recipes, meta: { requiresAuth: true } },
+  { path: '/recipes/myrecipes', name: 'MyRecipes', component: MyRecipes, meta: { requiresAuth: true } },
+  { path: '/recipes/otherrecipes', name: 'OtherRecipes', component: OtherRecipes, meta: { requiresAuth: true } },
+  { path: '/myfridge', name: 'MyFridge', component: MyFridge, meta: { requiresAuth: true } },
+  { path: '/shoppinglist', name: 'ShoppingList', component: ShoppingList, meta: { requiresAuth: true } },
+  { path: '/profile', name: 'Profile', component: Profile, meta: { requiresAuth: true } },
+  { path: '/ingredientes', name: 'IngredientsColumns', component: IngredientsColumns, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// Guard de navegação para proteger rotas
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = !!localStorage.getItem('access_token')
+  
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    // Redirecionar para login se a rota requer autenticação
+    next('/login')
+  } else if ((to.path === '/login' || to.path === '/register') && isAuthenticated) {
+    // Redirecionar para recipes se já estiver autenticado
+    next('/recipes')
+  } else {
+    next()
+  }
 })
 
 export default router

@@ -4,18 +4,67 @@
       <img src="/vite.svg" alt="Logo" class="logo" />
       <div class="navbar-links">
         <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/recipes" class="nav-link">Recipes</router-link>
-        <router-link to="/myfridge" class="nav-link">MyFridge</router-link>
-        <router-link to="/shoppinglist" class="nav-link">ShoppingList</router-link>
-        <router-link to="/ingredientes" class="nav-link">Ingredientes</router-link>
-        <router-link to="/profile" class="nav-link">Profile</router-link> 
+        <template v-if="isAuthenticated">
+          <router-link to="/recipes" class="nav-link">Recipes</router-link>
+          <router-link to="/myfridge" class="nav-link">MyFridge</router-link>
+          <router-link to="/shoppinglist" class="nav-link">ShoppingList</router-link>
+          <router-link to="/ingredientes" class="nav-link">Ingredientes</router-link>
+          <router-link to="/profile" class="nav-link">Profile</router-link>
+        </template>
       </div>
+    </div>
+    <div class="navbar-auth">
+      <template v-if="isAuthenticated">
+        <span class="user-name">👤 {{ userName }}</span>
+        <button @click="handleLogout" class="btn-logout">Sair</button>
+      </template>
+      <template v-else>
+        <router-link to="/login" class="btn-login">Entrar</router-link>
+        <router-link to="/register" class="btn-register">Criar Conta</router-link>
+      </template>
     </div>
   </nav>
 </template>
 
 <script setup>
-// Navbar não precisa de lógica por enquanto
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const isAuthenticated = ref(false);
+const user = ref(null);
+
+const userName = computed(() => {
+  return user.value?.name || 'Usuário';
+});
+
+const checkAuth = () => {
+  const token = localStorage.getItem('access_token');
+  const userData = localStorage.getItem('user');
+  
+  isAuthenticated.value = !!token;
+  if (userData) {
+    try {
+      user.value = JSON.parse(userData);
+    } catch (e) {
+      console.error('Erro ao parsear dados do usuário:', e);
+    }
+  }
+};
+
+const handleLogout = () => {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('user');
+  isAuthenticated.value = false;
+  user.value = null;
+  router.push('/');
+};
+
+onMounted(() => {
+  checkAuth();
+  // Atualizar estado quando storage mudar
+  window.addEventListener('storage', checkAuth);
+});
 </script>
 
 <style scoped>
@@ -26,28 +75,120 @@
   border-bottom: 1px solid #eee;
   padding: 1rem 2rem;
   font-family: 'Nunito Sans', sans-serif;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
 .navbar-group {
   display: flex;
   align-items: center;
 }
+
 .logo {
   height: 40px;
   margin-right: 3rem;
 }
+
 .navbar-links {
   display: flex;
-  gap: 4rem;
+  gap: 2rem;
+  align-items: center;
 }
+
 .nav-link {
   color: #000000;
   text-decoration: none;
   font-weight: 500;
-  font-size: 1.1em;
+  font-size: 1em;
   font-family: 'Nunito Sans';
+  transition: color 0.3s;
 }
+
+.nav-link:hover {
+  color: #1ab394;
+}
+
 .nav-link.router-link-exact-active {
   color: #1ab394;
   font-weight: bold;
+}
+
+.navbar-auth {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.user-name {
+  color: #333;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.btn-logout {
+  background: #ff5252;
+  color: white;
+  border: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.btn-logout:hover {
+  background: #e64545;
+  transform: translateY(-1px);
+}
+
+.btn-login,
+.btn-register {
+  text-decoration: none;
+  padding: 0.5rem 1.25rem;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.btn-login {
+  color: #667eea;
+  border: 2px solid #667eea;
+  background: white;
+}
+
+.btn-login:hover {
+  background: #667eea;
+  color: white;
+}
+
+.btn-register {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid transparent;
+}
+
+.btn-register:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .navbar-links {
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
 }
 </style>
