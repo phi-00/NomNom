@@ -130,3 +130,37 @@ async def get_ingredientes():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao buscar ingredientes: {str(e)}"
         )
+
+@router.get("/inventario/{user_email}")
+async def get_user_inventory(user_email: str):
+    """
+    Retorna o inventário de ingredientes de um usuário específico
+    Busca na tabela Inventario e faz JOIN com Ingrediente para obter detalhes completos
+    """
+    try:
+        supabase = get_supabase_client()
+        
+        response = supabase.table("Inventario").select(
+            "idIngrediente, idUtilizador, quantidade, Ingrediente(id, nome, grupo_alimentar, unidade_medida, calorias)"
+        ).eq("idUtilizador", user_email).execute()
+        
+        inventory = []
+        for item in response.data:
+            if item.get('Ingrediente'):
+                inventory.append({
+                    "idIngrediente": item["idIngrediente"],
+                    "quantidade": item["quantidade"],
+                    "id": item["Ingrediente"]["id"],
+                    "nome": item["Ingrediente"]["nome"],
+                    "grupo_alimentar": item["Ingrediente"]["grupo_alimentar"],
+                    "unidade_medida": item["Ingrediente"]["unidade_medida"],
+                    "calorias": item["Ingrediente"]["calorias"]
+                })
+        
+        return inventory
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao abrir frigorífico: {str(e)}"
+        )
