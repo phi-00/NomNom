@@ -6,7 +6,12 @@
         <img :src="recipe.image" :alt="recipe.name" />
         <h3>{{ recipe.name }}</h3>
         <p>{{ recipe.description }}</p>
-        <span class="time">⏱️ {{ recipe.time }}</span>
+        <div class="recipe-meta">
+          <span class="time">⏱️ {{ recipe.time }}</span>
+          <div class="tags" v-if="recipe.tags">
+            <span class="tag" v-for="tag in recipe.tags" :key="tag">{{ tag }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -21,6 +26,7 @@ const otherRecipes = ref([
     name: 'Chocolate Cake',
     description: 'Rich and moist dessert',
     time: '45 min',
+    tags: ['Vegetariana'],
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400'
   },
   {
@@ -28,6 +34,7 @@ const otherRecipes = ref([
     name: 'Chicken Curry',
     description: 'Spicy and flavorful',
     time: '40 min',
+    tags: ['Paleo', 'Sem Glúten'],
     image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400'
   },
   {
@@ -35,7 +42,32 @@ const otherRecipes = ref([
     name: 'Vegetable Stir Fry',
     description: 'Quick and healthy',
     time: '20 min',
+    tags: ['Vegan', 'Vegetariana'],
     image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'
+  },
+  {
+    id: 10,
+    name: 'Tacos Al Pastor',
+    description: 'Traditional Mexican flavors',
+    time: '25 min',
+    tags: ['Paleo'],
+    image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400'
+  },
+  {
+    id: 11,
+    name: 'Pad Thai',
+    description: 'Thai noodle stir fry',
+    time: '30 min',
+    tags: ['Vegan'],
+    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400'
+  },
+  {
+    id: 12,
+    name: 'Tiramisu',
+    description: 'Classic Italian dessert',
+    time: '20 min',
+    tags: ['Vegetariana'],
+    image: 'https://images.unsplash.com/photo-1571877227200-a0fb08a01a09?w=400'
   }
 ]);
 </script>
@@ -94,10 +126,32 @@ h1 {
   font-size: 0.9rem;
 }
 
+.recipe-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
 .recipe-card .time {
   display: inline-block;
-  margin-top: 0.5rem;
   color: #1ab394;
+  font-weight: 500;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  display: inline-block;
+  background-color: #e0f5f0;
+  color: #1ab394;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 </style>
