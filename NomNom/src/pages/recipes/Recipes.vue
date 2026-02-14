@@ -14,14 +14,14 @@
         class="recipe-carousel"
       >
         <template #item="slotProps">
-          <div class="recipe-card">
-            <img :src="slotProps.data.image" :alt="slotProps.data.name" />
-            <h3>{{ slotProps.data.name }}</h3>
-            <p>{{ slotProps.data.description }}</p>
+          <div class="recipe-card" @click="goToRecipe(slotProps.data.id)">
+            <img :src="slotProps.data.imagem || slotProps.data.image" :alt="slotProps.data.nome || slotProps.data.name" />
+            <h3>{{ slotProps.data.nome || slotProps.data.name }}</h3>
             <div class="recipe-meta">
-              <span class="time">⏱️ {{ slotProps.data.time }}</span>
-              <div class="tags" v-if="slotProps.data.tags">
-                <span class="tag" v-for="tag in slotProps.data.tags" :key="tag">{{ tag }}</span>
+              <span class="time">⏱️ {{ slotProps.data.tempo_preparacao || slotProps.data.time }} min</span>
+              <div class="tags">
+                <span class="tag" v-if="slotProps.data.dificuldade">{{ slotProps.data.dificuldade }}</span>
+                <span class="tag" v-if="slotProps.data.categoria">{{ slotProps.data.categoria }}</span>
               </div>
             </div>
           </div>
@@ -43,14 +43,14 @@
         class="recipe-carousel"
       >
         <template #item="slotProps">
-          <div class="recipe-card">
-            <img :src="slotProps.data.image" :alt="slotProps.data.name" />
-            <h3>{{ slotProps.data.name }}</h3>
-            <p>{{ slotProps.data.description }}</p>
+          <div class="recipe-card" @click="goToRecipe(slotProps.data.id)">
+            <img :src="slotProps.data.imagem || slotProps.data.image" :alt="slotProps.data.nome || slotProps.data.name" />
+            <h3>{{ slotProps.data.nome || slotProps.data.name }}</h3>
             <div class="recipe-meta">
-              <span class="time">⏱️ {{ slotProps.data.time }}</span>
-              <div class="tags" v-if="slotProps.data.tags">
-                <span class="tag" v-for="tag in slotProps.data.tags" :key="tag">{{ tag }}</span>
+              <span class="time">⏱️ {{ slotProps.data.tempo_preparacao || slotProps.data.time }} min</span>
+              <div class="tags">
+                <span class="tag" v-if="slotProps.data.dificuldade">{{ slotProps.data.dificuldade }}</span>
+                <span class="tag" v-if="slotProps.data.categoria">{{ slotProps.data.categoria }}</span>
               </div>
             </div>
           </div>
@@ -62,9 +62,15 @@
 
 <script setup>
 import Carousel from 'primevue/carousel';
-import { ref } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useRecipes } from '../../composables/useRecipes';
 
-const myRecipes = ref([
+const router = useRouter();
+const { minhasReceitas, outrasReceitas, loading, error, fetchAllRecipes } = useRecipes();
+
+// Dados default em caso de não haver dados no Supabase
+const defaultMyRecipes = ref([
   {
     id: 1,
     name: 'Spaghetti Carbonara',
@@ -115,7 +121,7 @@ const myRecipes = ref([
   }
 ]);
 
-const otherRecipes = ref([
+const defaultOtherRecipes = ref([
   {
     id: 4,
     name: 'Chocolate Cake',
@@ -166,6 +172,19 @@ const otherRecipes = ref([
   }
 ]);
 
+// Dados para exibir: usa do Supabase ou defaults
+const myRecipes = computed(() => {
+  return minhasReceitas.value && minhasReceitas.value.length > 0 
+    ? minhasReceitas.value 
+    : defaultMyRecipes.value;
+});
+
+const otherRecipes = computed(() => {
+  return outrasReceitas.value && outrasReceitas.value.length > 0 
+    ? outrasReceitas.value 
+    : defaultOtherRecipes.value;
+});
+
 const responsiveOptions = ref([
   {
     breakpoint: '1024px',
@@ -183,6 +202,15 @@ const responsiveOptions = ref([
     numScroll: 1
   }
 ]);
+
+// Carregar receitas ao montar o componente
+onMounted(async () => {
+  await fetchAllRecipes();
+});
+
+const goToRecipe = (recipeId) => {
+  router.push(`/recipes/${recipeId}`);
+};
 </script>
 
 <style scoped>
@@ -239,6 +267,7 @@ const responsiveOptions = ref([
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
+  cursor: pointer;
 }
 
 .recipe-card:hover {

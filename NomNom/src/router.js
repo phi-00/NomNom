@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from './pages/home/Home.vue'
 import Recipes from './pages/recipes/Recipes.vue'
+import RecipeDetail from './pages/recipes/RecipeDetail.vue'
 import MyRecipes from './pages/recipes/MyRecipes.vue'
 import OtherRecipes from './pages/recipes/OtherRecipes.vue'
 import MyFridge from './pages/myfridge/MyFridge.vue'
@@ -15,6 +16,7 @@ const routes = [
   { path: '/login', name: 'Login', component: Login, meta: { requiresAuth: false } },
   { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false } },
   { path: '/recipes', name: 'Recipes', component: Recipes, meta: { requiresAuth: true } },
+  { path: '/recipes/:id', name: 'RecipeDetail', component: RecipeDetail, meta: { requiresAuth: true } },
   { path: '/recipes/myrecipes', name: 'MyRecipes', component: MyRecipes, meta: { requiresAuth: true } },
   { path: '/recipes/otherrecipes', name: 'OtherRecipes', component: OtherRecipes, meta: { requiresAuth: true } },
   { path: '/myfridge', name: 'MyFridge', component: MyFridge, meta: { requiresAuth: true } },
