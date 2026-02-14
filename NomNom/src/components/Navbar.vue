@@ -27,10 +27,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 
 const router = useRouter();
+const route = useRoute();
 const isAuthenticated = ref(false);
 const user = ref(null);
 
@@ -62,8 +63,13 @@ const handleLogout = () => {
 
 onMounted(() => {
   checkAuth();
-  // Atualizar estado quando storage mudar
+  // Atualizar estado quando storage mudar de outra aba
   window.addEventListener('storage', checkAuth);
+});
+
+// Monitorar mudanças de rota para atualizar autenticação
+watch(() => route.path, () => {
+  checkAuth();
 });
 </script>
 
