@@ -81,7 +81,7 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const response = await apiClient.post('/auth/login', {
+    const response = await apiClient.post('/api/v1/auth/login', {
       email: formData.value.email,
       password: formData.value.password
     });
@@ -89,8 +89,8 @@ const handleLogin = async () => {
     success.value = 'Login realizado com sucesso! Redirecionando...';
     
     // Salvar token e dados do usuário
-    if (response.data.access_token) {
-      localStorage.setItem('access_token', response.data.access_token);
+    if (response.data.session?.access_token) {
+      localStorage.setItem('access_token', response.data.session.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
 
