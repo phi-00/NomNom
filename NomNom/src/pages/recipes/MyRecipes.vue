@@ -60,14 +60,6 @@ const myRecipes = ref([
     time: '35 min',
     tags: ['Paleo', 'Sem Glúten'],
     image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400'
-  },
-  {
-    id: 9,
-    name: 'Mushroom Risotto',
-    description: 'Creamy and savory rice dish',
-    time: '40 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1476124369162-2f4ee5ddc096?w=400'
   }
 ]);
 </script>

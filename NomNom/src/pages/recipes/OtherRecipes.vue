@@ -52,22 +52,6 @@ const otherRecipes = ref([
     time: '25 min',
     tags: ['Paleo'],
     image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400'
-  },
-  {
-    id: 11,
-    name: 'Pad Thai',
-    description: 'Thai noodle stir fry',
-    time: '30 min',
-    tags: ['Vegan'],
-    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400'
-  },
-  {
-    id: 12,
-    name: 'Tiramisu',
-    description: 'Classic Italian dessert',
-    time: '20 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1571877227200-a0fb08a01a09?w=400'
   }
 ]);
 </script>
