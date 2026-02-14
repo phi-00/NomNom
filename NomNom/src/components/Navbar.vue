@@ -43,10 +43,10 @@
   text-decoration: none;
   font-weight: 500;
   font-size: 1.1em;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Nunito Sans';
 }
 .nav-link.router-link-exact-active {
-  color: #336021;
+  color: #1ab394;
   font-weight: bold;
 }
 </style>

@@ -16,8 +16,9 @@
   align-items: center;
   justify-content: center;
   min-height: 60vh;
+  font-family: 'Nunito Sans';
 }
 h1 {
-  color: #42b883;
+  color: #1ab394;
 }
 </style>

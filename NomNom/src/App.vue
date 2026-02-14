@@ -22,13 +22,21 @@ watch(
 </script>
 
 <template>
-  <Navbar />
-  <transition :name="transitionName" mode="out-in">
-    <router-view />
-  </transition>
+  <div class="app-container">
+    <Navbar />
+    <transition :name="transitionName" mode="out-in">
+      <router-view />
+    </transition>
+  </div>
 </template>
 
 <style scoped>
+.app-container {
+  background-color: #ffffff !important;
+  min-height: 100vh;
+  width: 100%;
+}
+
 .slide-right-enter-active, .slide-right-leave-active {
   transition: transform 0.4s cubic-bezier(0.55, 0, 0.1, 1);
 }
