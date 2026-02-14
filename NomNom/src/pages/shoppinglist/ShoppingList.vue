@@ -5,46 +5,46 @@
       <div class="not-found-dialog">
         <p class="dialog-message">The following items were not found in the database:</p>
         
-        <div v-for="(item, index) in notFoundItems" :key="index" class="not-found-item">
+        <div v-for="item in notFoundItems" :key="item" class="not-found-item">
           <h3>"{{ item }}"</h3>
           
           <!-- Search similar -->
           <div class="search-section">
-            <Button @click="searchSimilar(item, index)" label="Search Similar" icon="pi pi-search" size="small" />
+            <Button @click="searchSimilar(item)" label="Search Similar" icon="pi pi-search" size="small" />
             
-            <div v-if="similarResults[index]?.length > 0" class="similar-results">
+            <div v-if="similarResults[item]?.length > 0" class="similar-results">
               <p class="similar-title">Similar items found:</p>
-              <div v-for="similar in similarResults[index]" :key="similar.id" class="similar-item">
+              <div v-for="similar in similarResults[item]" :key="similar.id" class="similar-item">
                 <span>{{ similar.nome }} ({{ similar.grupo_alimentar }})</span>
                 <Button @click="useExistingItem(item, similar)" label="Use This" size="small" />
               </div>
             </div>
-            <div v-else-if="similarResults[index] !== undefined" class="no-results">
+            <div v-else-if="similarResults[item] !== undefined" class="no-results">
               No similar items found
             </div>
           </div>
 
           <!-- Create new -->
           <div class="create-section">
-            <Button @click="showCreateForm[index] = !showCreateForm[index]" 
-                    :label="showCreateForm[index] ? 'Cancel' : 'Create New Ingredient'" 
+            <Button @click="toggleCreateForm(item)" 
+                    :label="showCreateForm[item] ? 'Cancel' : 'Create New Ingredient'" 
                     icon="pi pi-plus" 
                     size="small"
                     severity="success" />
             
-            <div v-if="showCreateForm[index]" class="create-form">
-              <InputText v-model="newIngredient[index].nome" placeholder="Name" class="form-input" />
-              <Select v-model="newIngredient[index].grupo_alimentar" 
+            <div v-if="showCreateForm[item]" class="create-form">
+              <InputText v-model="newIngredient[item].nome" placeholder="Name" class="form-input" />
+              <Select v-model="newIngredient[item].grupo_alimentar" 
                       :options="foodGroups" 
                       placeholder="Food Group" 
                       class="form-input" />
-              <InputText v-model="newIngredient[index].unidade_medida" placeholder="Unit (e.g., g, ml, un)" class="form-input" />
-              <InputNumber v-model="newIngredient[index].calorias" placeholder="Calories" class="form-input" />
-              <Button @click="createAndAddItem(item, index)" label="Create & Add to Fridge" severity="success" />
+              <InputText v-model="newIngredient[item].unidade_medida" placeholder="Unit (e.g., g, ml, un)" class="form-input" />
+              <InputNumber v-model="newIngredient[item].calorias" placeholder="Calories" class="form-input" />
+              <Button @click="createAndAddItem(item)" label="Create & Add to Fridge" severity="success" />
             </div>
           </div>
 
-          <Divider v-if="index < notFoundItems.length - 1" />
+          <Divider v-if="notFoundItems.indexOf(item) < notFoundItems.length - 1" />
         </div>
       </div>
       
@@ -209,9 +209,15 @@ const saveChanges = async () => {
   if (itemsNotFound.length > 0) {
     // Initialize form data for each not found item
     notFoundItems.value = itemsNotFound;
-    itemsNotFound.forEach((item, index) => {
-      showCreateForm.value[index] = false;
-      newIngredient.value[index] = {
+    
+    // Reset reactive objects
+    similarResults.value = {};
+    showCreateForm.value = {};
+    newIngredient.value = {};
+    
+    itemsNotFound.forEach((item) => {
+      showCreateForm.value[item] = false;
+      newIngredient.value[item] = {
         nome: item,
         grupo_alimentar: '',
         unidade_medida: 'g',
@@ -222,9 +228,14 @@ const saveChanges = async () => {
   }
 }
 
-const searchSimilar = async (itemName, index) => {
+const searchSimilar = async (itemName) => {
   const results = await searchSimilarIngredients(itemName);
-  similarResults.value[index] = results;
+  // Create a new object to ensure Vue reactivity
+  similarResults.value = { ...similarResults.value, [itemName]: results };
+};
+
+const toggleCreateForm = (itemName) => {
+  showCreateForm.value = { ...showCreateForm.value, [itemName]: !showCreateForm.value[itemName] };
 };
 
 const useExistingItem = async (originalName, ingredient) => {
@@ -237,8 +248,21 @@ const useExistingItem = async (originalName, ingredient) => {
       life: 3000 
     });
     
-    // Remove from not found list
+    // Remove from not found list and clean up related data
     notFoundItems.value = notFoundItems.value.filter(item => item !== originalName);
+    
+    // Clean up the data for the removed item
+    const newSimilarResults = { ...similarResults.value };
+    const newShowCreateForm = { ...showCreateForm.value };
+    const newIngredientData = { ...newIngredient.value };
+    
+    delete newSimilarResults[originalName];
+    delete newShowCreateForm[originalName];
+    delete newIngredientData[originalName];
+    
+    similarResults.value = newSimilarResults;
+    showCreateForm.value = newShowCreateForm;
+    newIngredient.value = newIngredientDataData;
     
     if (notFoundItems.value.length === 0) {
       showNotFoundDialog.value = false;
@@ -254,8 +278,8 @@ const useExistingItem = async (originalName, ingredient) => {
   }
 };
 
-const createAndAddItem = async (originalName, index) => {
-  const ingredientData = newIngredient.value[index];
+const createAndAddItem = async (originalName) => {
+  const ingredientData = newIngredient.value[originalName];
   
   if (!ingredientData.nome || !ingredientData.grupo_alimentar) {
     toast.add({ 
@@ -281,8 +305,21 @@ const createAndAddItem = async (originalName, index) => {
       life: 3000 
     });
     
-    // Remove from not found list
+    // Remove from not found list and clean up related data
     notFoundItems.value = notFoundItems.value.filter(item => item !== originalName);
+    
+    // Clean up the data for the removed item
+    const newSimilarResults = { ...similarResults.value };
+    const newShowCreateForm = { ...showCreateForm.value };
+    const newNewIngredient = { ...newIngredient.value };
+    
+    delete newSimilarResults[originalName];
+    delete newShowCreateForm[originalName];
+    delete newNewIngredient[originalName];
+    
+    similarResults.value = newSimilarResults;
+    showCreateForm.value = newShowCreateForm;
+    newIngredient.value = newNewIngredient;
     
     if (notFoundItems.value.length === 0) {
       showNotFoundDialog.value = false;
