@@ -7,7 +7,7 @@ const route = useRoute()
 const router = useRouter()
 const transitionName = ref('slide-right')
 
-const pageOrder = ['/', '/recipes', '/myfridge', '/shoppinglist']
+const pageOrder = ['/', '/recipes', '/myfridge', '/shoppinglist', '/ingredientes']
 let prevIndex = pageOrder.indexOf(route.path)
 
 watch(
@@ -19,6 +19,7 @@ watch(
     prevIndex = toIndex
   }
 )
+
 </script>
 
 <template>

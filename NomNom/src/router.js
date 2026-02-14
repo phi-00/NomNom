@@ -6,6 +6,7 @@ import OtherRecipes from './pages/recipes/OtherRecipes.vue'
 import MyFridge from './pages/myfridge/MyFridge.vue'
 import ShoppingList from './pages/shoppinglist/ShoppingList.vue'
 import Profile from './pages/user_profile/Profile.vue'
+import IngredientsColumns from './pages/IngredientsColumns.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/myfridge', name: 'MyFridge', component: MyFridge },
   { path: '/shoppinglist', name: 'ShoppingList', component: ShoppingList },
   { path: '/profile', name: 'Profile', component: Profile },
+  { path: '/ingredientes', name: 'IngredientsColumns', component: IngredientsColumns },
 ]
 
 const router = createRouter({
