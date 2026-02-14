@@ -77,8 +77,8 @@ watch(() => route.path, () => {
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap');
 
 .navbar {
-  background: #fff;
-  border-bottom: 1px solid #eee;
+  background: var(--navbar-bg);
+  border-bottom: 1px solid var(--border-color);
   padding: 1rem 2rem;
   font-family: 'Nunito Sans', sans-serif;
   display: flex;
@@ -103,7 +103,7 @@ watch(() => route.path, () => {
 }
 
 .nav-link {
-  color: #000000;
+  color: var(--text-primary);
   text-decoration: none;
   font-weight: 500;
   font-size: 1em;
@@ -112,11 +112,11 @@ watch(() => route.path, () => {
 }
 
 .nav-link:hover {
-  color: #1ab394;
+  color: var(--accent-color);
 }
 
 .nav-link.router-link-exact-active {
-  color: #1ab394;
+  color: var(--accent-color);
   font-weight: bold;
 }
 
@@ -127,7 +127,7 @@ watch(() => route.path, () => {
 }
 
 .user-name {
-  color: #333;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 0.95rem;
   text-decoration: none;
@@ -167,13 +167,13 @@ watch(() => route.path, () => {
 }
 
 .btn-login {
-  color: #1ab394;
-  border: 2px solid #1ab394;
-  background: white;
+  color: var(--accent-color);
+  border: 2px solid var(--accent-color);
+  background: var(--navbar-bg);
 }
 
 .btn-login:hover {
-  background: #1ab394;
+  background: var(--accent-color);
   color: white;
 }
 

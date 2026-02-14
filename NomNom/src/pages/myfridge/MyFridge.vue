@@ -13,9 +13,13 @@
                     Nenhum ingrediente nesta categoria
                   </div>
                   <div v-else>
+                    <div  class="ingredient-item">
+                      <span class="ingredient-quantity">Ingredient</span>
+                      <span class="ingredient-quantity">Quantity</span>
+                    </div>
                     <div v-for="item in getIngredientsByGroup(tab.grupo_alimentar)" :key="item.idIngrediente" class="ingredient-item">
+                      <span class="ingredient-quantity">{{ item.quantidade }}</span>
                       <span class="ingredient-name">{{ item.nome }}</span>
-                      <span class="ingredient-quantity">{{ item.quantidade }}{{ item.unidade_medida }}</span>
                     </div>
                   </div>
                 </TabPanel>
@@ -54,13 +58,15 @@
   };
 
   const tabs = ref([
-    { title: 'Fruit', grupo_alimentar: 'frutas', value: '0' },
+    { title: 'Fruit', grupo_alimentar: 'fruta', value: '0' },
     { title: 'Eggs', grupo_alimentar: 'ovos', value: '1' },
-    { title: 'Dairy', grupo_alimentar: 'lacticínios', value: '2' },
+    { title: 'Dairy', grupo_alimentar: 'laticíneos', value: '2' },
     { title: 'Fish', grupo_alimentar: 'pescado', value: '3' },
     { title: 'Spices', grupo_alimentar: 'especiarias', value: '4' },
-    { title: 'Cereals', grupo_alimentar: 'cereais e derivados', value: '5' },
-    { title: 'Vegetables', grupo_alimentar: 'hortícolas', value: '6' }
+    { title: 'Cereals', grupo_alimentar: 'cereais e derivados, tuberculos', value: '5' },
+    { title: 'Vegetables', grupo_alimentar: 'hortícolas', value: '6' },
+    { title: 'Meat', grupo_alimentar: 'carnes', value: '7' },
+    { title: 'Legumes', grupo_alimentar: 'leguminosas', value: '8' }
   ]);
 
 
@@ -73,31 +79,10 @@
   max-width: 1400px;
   margin: 0 auto;
   font-family: 'Nunito Sans';
-  background: #ffffff;
+  color: var(--text-primary);
 }
-
-.card {
-  background: #ffffff !important;
-}
-
-:deep(.p-tabs) {
-  background: #ffffff !important;
-}
-
-:deep(.p-tabs .p-tablist) {
-  background: #ffffff !important;
-}
-
-:deep(.p-tabs .p-tabpanels) {
-  background: #ffffff !important;
-}
-
-:deep(.p-tabpanel) {
-  background: #ffffff !important;
-}
-
 h1 {
-  color: #1ab394;
+  color: var(--accent-color);
 }
 
 .ingredient-item {
@@ -106,30 +91,30 @@ h1 {
   align-items: center;
   padding: 0.75rem 1rem;
   margin: 0.5rem 0;
-  background: #f8f9fa;
+  background: var(--bg-secondary);
   border-radius: 8px;
   transition: all 0.2s;
 }
 
 .ingredient-item:hover {
-  background: #e9ecef;
+  background: var(--card-hover);
   transform: translateX(4px);
 }
 
 .ingredient-name {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .ingredient-quantity {
-  color: #667eea;
+  color: var(--accent-color);
   font-weight: 700;
 }
 
 .empty-message {
   text-align: center;
   padding: 2rem;
-  color: #999;
+  color: var(--text-secondary);
   font-style: italic;
 }
 </style>

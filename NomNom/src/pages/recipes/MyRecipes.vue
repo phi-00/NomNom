@@ -70,10 +70,11 @@ const myRecipes = ref([
   max-width: 1400px;
   margin: 0 auto;
   font-family: 'Nunito Sans';
+  color: var(--text-primary);
 }
 
 h1 {
-  color: #1ab394;
+  color: var(--accent-color);
   font-size: 2.5rem;
   margin-bottom: 2rem;
 }
@@ -85,10 +86,10 @@ h1 {
 }
 
 .recipe-card {
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1rem;
-  background: white;
+  background: var(--bg-card);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
 }
@@ -107,13 +108,13 @@ h1 {
 }
 
 .recipe-card h3 {
-  color: #333;
+  color: var(--text-primary);
   margin: 0.5rem 0;
   font-size: 1.2rem;
 }
 
 .recipe-card p {
-  color: #666;
+  color: var(--text-secondary);
   margin: 0.5rem 0;
   font-size: 0.9rem;
 }
@@ -127,7 +128,7 @@ h1 {
 
 .recipe-card .time {
   display: inline-block;
-  color: #1ab394;
+  color: var(--accent-color);
   font-weight: 500;
 }
 
@@ -139,8 +140,8 @@ h1 {
 
 .tag {
   display: inline-block;
-  background-color: #e0f5f0;
-  color: #1ab394;
+  background-color: var(--bg-secondary);
+  color: var(--accent-color);
   padding: 4px 10px;
   border-radius: 16px;
   font-size: 0.75rem;

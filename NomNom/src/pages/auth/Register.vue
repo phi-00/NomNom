@@ -151,13 +151,13 @@ const handleRegister = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #1ab394 0%, #ffffff 100%);
+  background: linear-gradient(135deg, var(--accent-color) 0%, var(--bg-primary) 100%);
   padding: 2rem;
   font-family: 'Nunito Sans', sans-serif;
 }
 
 .auth-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   padding: 3rem;
@@ -184,13 +184,13 @@ const handleRegister = async () => {
 
 .auth-header h1 {
   margin: 0 0 0.5rem 0;
-  color: #333;
+  color: var(--text-primary);
   font-size: 2rem;
 }
 
 .auth-header p {
   margin: 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
@@ -208,32 +208,32 @@ const handleRegister = async () => {
 
 .form-group label {
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
 .form-group input {
   padding: 0.875rem;
-  border: 2px solid #e0e0e0;
+  border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s;
-  background: white;
-  color: #000;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .form-group input::placeholder {
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #1ab394;
+  border-color: var(--accent-color);
   box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1);
 }
 
 .form-group input:disabled {
-  background: #f5f5f5;
+  background: var(--bg-secondary);
   cursor: not-allowed;
 }
 
@@ -282,24 +282,24 @@ const handleRegister = async () => {
   text-align: center;
   margin-top: 2rem;
   padding-top: 2rem;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border-color);
 }
 
 .auth-footer p {
   margin: 0 0 0.5rem 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .link {
-  color: #1ab394;
+  color: var(--accent-color);
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s;
 }
 
 .link:hover {
-  color: #15935f;
+  color: var(--accent-hover);
   text-decoration: underline;
 }
 

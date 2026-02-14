@@ -93,12 +93,13 @@ onMounted(async () => {
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Nunito Sans', sans-serif;
+  color: var(--text-primary);
 }
 
 .back-link {
   display: inline-block;
   margin-bottom: 2rem;
-  color: #1ab394;
+  color: var(--accent-color);
   text-decoration: none;
   font-weight: 600;
   font-size: 1rem;
@@ -114,12 +115,12 @@ onMounted(async () => {
 .not-found {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 1.1rem;
 }
 
 .recipe-detail {
-  background: white;
+  background: var(--bg-card);
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -181,26 +182,26 @@ onMounted(async () => {
 
 .recipe-steps {
   padding: 2rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
 }
 
 .recipe-steps h2 {
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 1.5rem 0;
   font-size: 1.5rem;
-  border-bottom: 3px solid #1ab394;
+  border-bottom: 3px solid var(--accent-color);
   padding-bottom: 0.5rem;
 }
 
 .steps-content {
-  background: #f9f9f9;
+  background: var(--bg-secondary);
   padding: 1.5rem;
   border-radius: 8px;
-  border-left: 4px solid #1ab394;
+  border-left: 4px solid var(--accent-color);
 }
 
 .steps-text {
-  color: #555;
+  color: var(--text-primary);
   line-height: 1.8;
   margin: 0;
   white-space: pre-wrap;
@@ -208,16 +209,16 @@ onMounted(async () => {
 }
 
 .empty-message {
-  color: #999;
+  color: var(--text-secondary);
   font-style: italic;
   margin: 0;
 }
 
 .recipe-footer {
   padding: 1rem 2rem;
-  background: #f0f0f0;
+  background: var(--bg-secondary);
   text-align: center;
-  color: #666;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 

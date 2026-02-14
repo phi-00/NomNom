@@ -35,7 +35,7 @@ watch(
 
 <style scoped>
 .app-container {
-  background-color: #ffffff !important;
+  background-color: var(--bg-primary);
   min-height: 100vh;
   width: 100%;
 }

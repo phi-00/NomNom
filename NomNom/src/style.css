@@ -5,9 +5,22 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light;
-  color: #213547;
-  background-color: #ffffff !important;
+  /* Light mode colors */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #213547;
+  --text-secondary: #666;
+  --border-color: #eee;
+  --accent-color: #1ab394;
+  --accent-hover: #15935f;
+  --navbar-bg: #ffffff;
+  --input-bg: #ffffff;
+  --card-hover: #f5f5f5;
+  
+  color-scheme: light dark;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,32 +28,37 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode colors */
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --bg-card: #252525;
+    --text-primary: #e0e0e0;
+    --text-secondary: #a0a0a0;
+    --border-color: #404040;
+    --accent-color: #1ab394;
+    --accent-hover: #15935f;
+    --navbar-bg: #1f1f1f;
+    --input-bg: #2a2a2a;
+    --card-hover: #303030;
+  }
+}
+
 body {
   margin: 0;
-  background-color: #ffffff !important;
-  color: #213547;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
   min-width: 320px;
   min-height: 100vh;
 }
 
 #app {
-  background-color: #ffffff !important;
+  background-color: var(--bg-primary);
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
 @import "tailwindcss";
+

@@ -63,7 +63,7 @@ export function useIngredients() {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiClient.get(`/api/v1/ingredientes/inventário/${userEmail}`);
+      const response = await apiClient.get(`/api/v1/ingredientes/inventario/${userEmail}`);
       ingredientes.value = response.data;
       
       // Se response.data é um array com dados, extrair as colunas
@@ -82,6 +82,79 @@ export function useIngredients() {
     }
   };
 
+  const searchIngredientByName = async (name) => {
+    try {
+      const response = await apiClient.get('/api/v1/ingredientes');
+      const allIngredients = response.data;
+      
+      // Search for ingredient by name (case insensitive)
+      return allIngredients.find(ing => 
+        ing.nome.toLowerCase() === name.toLowerCase()
+      );
+    } catch (err) {
+      console.error('Erro ao buscar ingrediente:', err);
+      return null;
+    }
+  };
+
+  const searchSimilarIngredients = async (name) => {
+    try {
+      const response = await apiClient.get('/api/v1/ingredientes');
+      const allIngredients = response.data;
+      
+      // Fuzzy search - find ingredients that contain the search term
+      return allIngredients.filter(ing => 
+        ing.nome.toLowerCase().includes(name.toLowerCase()) ||
+        name.toLowerCase().includes(ing.nome.toLowerCase())
+      ).slice(0, 10); // Limit to 10 results
+    } catch (err) {
+      console.error('Erro ao buscar ingredientes similares:', err);
+      return [];
+    }
+  };
+
+  const createIngredient = async (ingredientData) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await apiClient.post('/api/v1/ingredientes', ingredientData);
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.detail || 'Erro ao criar ingrediente';
+      console.error('Erro ao criar ingrediente:', err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const addToInventory = async (userEmail, ingredientId, quantity = 1) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      console.log('addToInventory called with:', { userEmail, ingredientId, quantity });
+      
+      const payload = {
+        idUtilizador: userEmail,
+        idIngrediente: Number(ingredientId), // Ensure it's a number
+        quantidade: Number(quantity) // Ensure it's a number
+      };
+      
+      console.log('Payload being sent:', payload);
+      
+      const response = await apiClient.post('/api/v1/ingredientes/inventario', payload);
+      console.log('Response from server:', response.data);
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.detail || 'Erro ao adicionar ao inventário';
+      console.error('Erro ao adicionar ao inventário:', err);
+      console.error('Error response:', err.response?.data);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     columns,
     ingredientes,
@@ -93,5 +166,9 @@ export function useIngredients() {
     fetchPreview,
     fetchIngredientes,
     fetchUserInventory,
+    searchIngredientByName,
+    searchSimilarIngredients,
+    createIngredient,
+    addToInventory,
   };
 }
