@@ -12,7 +12,15 @@ export function useRecipes() {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiClient.get('/api/v1/receitas/minhas');
+      // Se não há email, não há receitas favoritas ainda
+      if (!userEmail) {
+        minhasReceitas.value = [];
+        return;
+      }
+
+      const response = await apiClient.get('/api/v1/receitas/minhas', {
+        params: { user_email: userEmail }
+      });
       minhasReceitas.value = response.data || [];
     } catch (err) {
       error.value = err.response?.data?.detail || 'Erro ao buscar minhas receitas';
@@ -23,11 +31,19 @@ export function useRecipes() {
     }
   };
 
-  const fetchOutrasReceitas = async () => {
+  const fetchOutrasReceitas = async (userEmail = null) => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await apiClient.get('/api/v1/receitas/outras');
+      if (!userEmail) {
+        const response = await apiClient.get('/api/v1/receitas');
+        outrasReceitas.value = response.data || [];
+        return;
+      }
+
+      const response = await apiClient.get('/api/v1/receitas/outras', {
+        params: { user_email: userEmail }
+      });
       outrasReceitas.value = response.data || [];
     } catch (err) {
       error.value = err.response?.data?.detail || 'Erro ao buscar outras receitas';
@@ -59,7 +75,7 @@ export function useRecipes() {
     try {
       await Promise.all([
         fetchMinhasReceitas(userEmail),
-        fetchOutrasReceitas()
+        fetchOutrasReceitas(userEmail)
       ]);
     } catch (err) {
       error.value = err.response?.data?.detail || 'Erro ao buscar receitas';

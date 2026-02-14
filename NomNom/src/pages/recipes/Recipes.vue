@@ -19,6 +19,9 @@
             <h3>{{ slotProps.data.nome || slotProps.data.name }}</h3>
             <div class="recipe-meta">
               <span class="time">⏱️ {{ slotProps.data.tempo_preparacao || slotProps.data.time }} min</span>
+              <span v-if="slotProps.data.calorias_totais" class="calories">
+                🔥 {{ Math.round(slotProps.data.calorias_totais) }} kcal
+              </span>
               <div class="tags">
                 <span class="tag" v-if="slotProps.data.dificuldade">{{ slotProps.data.dificuldade }}</span>
                 <span class="tag" v-if="slotProps.data.categoria">{{ slotProps.data.categoria }}</span>
@@ -48,6 +51,9 @@
             <h3>{{ slotProps.data.nome || slotProps.data.name }}</h3>
             <div class="recipe-meta">
               <span class="time">⏱️ {{ slotProps.data.tempo_preparacao || slotProps.data.time }} min</span>
+              <span v-if="slotProps.data.calorias_totais" class="calories">
+                🔥 {{ Math.round(slotProps.data.calorias_totais) }} kcal
+              </span>
               <div class="tags">
                 <span class="tag" v-if="slotProps.data.dificuldade">{{ slotProps.data.dificuldade }}</span>
                 <span class="tag" v-if="slotProps.data.categoria">{{ slotProps.data.categoria }}</span>
@@ -98,7 +104,8 @@ const responsiveOptions = ref([
 
 // Carregar receitas ao montar o componente
 onMounted(async () => {
-  await fetchAllRecipes();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  await fetchAllRecipes(user.email || null);
 });
 
 const goToRecipe = (recipeId) => {
@@ -199,6 +206,16 @@ const goToRecipe = (recipeId) => {
   display: inline-block;
   color: var(--accent-color);
   font-weight: 500;
+}
+
+.recipe-card .calories {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .tags {

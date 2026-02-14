@@ -1,15 +1,22 @@
 <template>
   <section class="my-recipes">
     <h1>My Recipes</h1>
-    <div class="recipes-grid">
-      <div class="recipe-card" v-for="recipe in myRecipes" :key="recipe.id">
-        <img :src="recipe.image" :alt="recipe.name" />
-        <h3>{{ recipe.name }}</h3>
-        <p>{{ recipe.description }}</p>
+    <div v-if="loading" class="loading">Loading recipes...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else-if="myRecipes.length === 0" class="no-recipes">No recipes found</div>
+    <div v-else class="recipes-grid">
+      <div class="recipe-card" v-for="recipe in myRecipes" :key="recipe.id" @click="goToRecipe(recipe.id)">
+        <img :src="recipe.imagem || recipe.image" :alt="recipe.nome || recipe.name" />
+        <h3>{{ recipe.nome || recipe.name }}</h3>
+        <p>{{ recipe.descricao || recipe.description }}</p>
         <div class="recipe-meta">
-          <span class="time">⏱️ {{ recipe.time }}</span>
-          <div class="tags" v-if="recipe.tags">
-            <span class="tag" v-for="tag in recipe.tags" :key="tag">{{ tag }}</span>
+          <span class="time">⏱️ {{ recipe.tempo_preparacao || recipe.time }} min</span>
+          <span v-if="recipe.calorias_totais" class="calories">
+            🔥 {{ Math.round(recipe.calorias_totais) }} kcal
+          </span>
+          <div class="tags">
+            <span class="tag" v-if="recipe.dificuldade">{{ recipe.dificuldade }}</span>
+            <span class="tag" v-if="recipe.categoria">{{ recipe.categoria }}</span>
           </div>
         </div>
       </div>
@@ -18,50 +25,25 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { onMounted, computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useRecipes } from '../../composables/useRecipes';
 
-const myRecipes = ref([
-  {
-    id: 1,
-    name: 'Spaghetti Carbonara',
-    description: 'Classic Italian pasta dish',
-    time: '30 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400'
-  },
-  {
-    id: 2,
-    name: 'Caesar Salad',
-    description: 'Fresh and crispy salad',
-    time: '15 min',
-    tags: ['Vegan', 'Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400'
-  },
-  {
-    id: 3,
-    name: 'Grilled Salmon',
-    description: 'Healthy and delicious',
-    time: '25 min',
-    tags: ['Sem Glúten', 'Paleo'],
-    image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400'
-  },
-  {
-    id: 7,
-    name: 'Pasta Primavera',
-    description: 'Light and colorful vegetables',
-    time: '20 min',
-    tags: ['Vegan', 'Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400'
-  },
-  {
-    id: 8,
-    name: 'Beef Steak',
-    description: 'Juicy and tender meat',
-    time: '35 min',
-    tags: ['Paleo', 'Sem Glúten'],
-    image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400'
-  }
-]);
+const router = useRouter();
+const { minhasReceitas, loading, error, fetchMinhasReceitas } = useRecipes();
+
+const myRecipes = computed(() => {
+  return minhasReceitas.value || [];
+});
+
+onMounted(async () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  await fetchMinhasReceitas(user.email || null);
+});
+
+const goToRecipe = (recipeId) => {
+  router.push(`/recipes/${recipeId}`);
+};
 </script>
 
 <style scoped>
@@ -71,6 +53,20 @@ const myRecipes = ref([
   margin: 0 auto;
   font-family: 'Nunito Sans';
   color: var(--text-primary);
+}
+
+.loading, .error, .no-recipes {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #e74c3c;
+}
+
+.no-recipes {
+  color: var(--text-secondary);
 }
 
 h1 {
@@ -92,6 +88,7 @@ h1 {
   background: var(--bg-card);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s;
+  cursor: pointer;
 }
 
 .recipe-card:hover {
@@ -117,6 +114,10 @@ h1 {
   color: var(--text-secondary);
   margin: 0.5rem 0;
   font-size: 0.9rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .recipe-meta {
@@ -130,6 +131,16 @@ h1 {
   display: inline-block;
   color: var(--accent-color);
   font-weight: 500;
+}
+
+.recipe-card .calories {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .tags {
