@@ -14,8 +14,8 @@
                   </div>
                   <div v-else>
                     <div  class="ingredient-item">
-                      <span class="ingredient-quantity">Ingredient</span>
                       <span class="ingredient-quantity">Quantity</span>
+                      <span class="ingredient-quantity">Ingredient</span>
                     </div>
                     <div v-for="item in getIngredientsByGroup(tab.grupo_alimentar)" :key="item.idIngrediente" class="ingredient-item">
                       <span class="ingredient-quantity">{{ item.quantidade }}</span>

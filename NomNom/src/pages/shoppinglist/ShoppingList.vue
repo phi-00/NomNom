@@ -1,59 +1,60 @@
 <template>
-  <Toast />
-  <Dialog v-model:visible="showNotFoundDialog" modal header="Items Not Found" :style="{ width: '600px' }">
-    <div class="not-found-dialog">
-      <p class="dialog-message">The following items were not found in the database:</p>
-      
-      <div v-for="(item, index) in notFoundItems" :key="index" class="not-found-item">
-        <h3>"{{ item }}"</h3>
+  <div class="shopping-list-wrapper">
+    <Toast />
+    <Dialog v-model:visible="showNotFoundDialog" modal header="Items Not Found" :style="{ width: '600px' }">
+      <div class="not-found-dialog">
+        <p class="dialog-message">The following items were not found in the database:</p>
         
-        <!-- Search similar -->
-        <div class="search-section">
-          <Button @click="searchSimilar(item, index)" label="Search Similar" icon="pi pi-search" size="small" />
+        <div v-for="(item, index) in notFoundItems" :key="index" class="not-found-item">
+          <h3>"{{ item }}"</h3>
           
-          <div v-if="similarResults[index]?.length > 0" class="similar-results">
-            <p class="similar-title">Similar items found:</p>
-            <div v-for="similar in similarResults[index]" :key="similar.id" class="similar-item">
-              <span>{{ similar.nome }} ({{ similar.grupo_alimentar }})</span>
-              <Button @click="useExistingItem(item, similar)" label="Use This" size="small" />
+          <!-- Search similar -->
+          <div class="search-section">
+            <Button @click="searchSimilar(item, index)" label="Search Similar" icon="pi pi-search" size="small" />
+            
+            <div v-if="similarResults[index]?.length > 0" class="similar-results">
+              <p class="similar-title">Similar items found:</p>
+              <div v-for="similar in similarResults[index]" :key="similar.id" class="similar-item">
+                <span>{{ similar.nome }} ({{ similar.grupo_alimentar }})</span>
+                <Button @click="useExistingItem(item, similar)" label="Use This" size="small" />
+              </div>
+            </div>
+            <div v-else-if="similarResults[index] !== undefined" class="no-results">
+              No similar items found
             </div>
           </div>
-          <div v-else-if="similarResults[index] !== undefined" class="no-results">
-            No similar items found
-          </div>
-        </div>
 
-        <!-- Create new -->
-        <div class="create-section">
-          <Button @click="showCreateForm[index] = !showCreateForm[index]" 
-                  :label="showCreateForm[index] ? 'Cancel' : 'Create New Ingredient'" 
-                  icon="pi pi-plus" 
-                  size="small"
-                  severity="success" />
-          
-          <div v-if="showCreateForm[index]" class="create-form">
-            <InputText v-model="newIngredient[index].nome" placeholder="Name" class="form-input" />
-            <Select v-model="newIngredient[index].grupo_alimentar" 
-                    :options="foodGroups" 
-                    placeholder="Food Group" 
-                    class="form-input" />
-            <InputText v-model="newIngredient[index].unidade_medida" placeholder="Unit (e.g., g, ml, un)" class="form-input" />
-            <InputNumber v-model="newIngredient[index].calorias" placeholder="Calories" class="form-input" />
-            <Button @click="createAndAddItem(item, index)" label="Create & Add to Fridge" severity="success" />
+          <!-- Create new -->
+          <div class="create-section">
+            <Button @click="showCreateForm[index] = !showCreateForm[index]" 
+                    :label="showCreateForm[index] ? 'Cancel' : 'Create New Ingredient'" 
+                    icon="pi pi-plus" 
+                    size="small"
+                    severity="success" />
+            
+            <div v-if="showCreateForm[index]" class="create-form">
+              <InputText v-model="newIngredient[index].nome" placeholder="Name" class="form-input" />
+              <Select v-model="newIngredient[index].grupo_alimentar" 
+                      :options="foodGroups" 
+                      placeholder="Food Group" 
+                      class="form-input" />
+              <InputText v-model="newIngredient[index].unidade_medida" placeholder="Unit (e.g., g, ml, un)" class="form-input" />
+              <InputNumber v-model="newIngredient[index].calorias" placeholder="Calories" class="form-input" />
+              <Button @click="createAndAddItem(item, index)" label="Create & Add to Fridge" severity="success" />
+            </div>
           </div>
-        </div>
 
-        <Divider v-if="index < notFoundItems.length - 1" />
+          <Divider v-if="index < notFoundItems.length - 1" />
+        </div>
       </div>
-    </div>
-    
-    <template #footer>
-      <Button label="Close" @click="showNotFoundDialog = false" severity="secondary" />
-    </template>
-  </Dialog>
+      
+      <template #footer>
+        <Button label="Close" @click="showNotFoundDialog = false" severity="secondary" />
+      </template>
+    </Dialog>
 
-  <section class="shoppinglist">
-    <h1>Shopping List</h1>
+    <section class="shoppinglist">
+      <h1>Shopping List</h1>
 
     <div class="add-item-container">
       <InputText 
@@ -100,6 +101,7 @@
     </div>
 
   </section>
+  </div>
 </template>
 
 <script setup>
@@ -226,10 +228,6 @@ const searchSimilar = async (itemName, index) => {
 };
 
 const useExistingItem = async (originalName, ingredient) => {
-  console.log('useExistingItem called with:', { originalName, ingredient });
-  console.log('User email:', user.value?.email);
-  console.log('Ingredient ID:', ingredient.id);
-  
   try {
     await addToInventory(user.value.email, ingredient.id, 1);
     toast.add({ 
@@ -247,7 +245,6 @@ const useExistingItem = async (originalName, ingredient) => {
     }
   } catch (err) {
     console.error('Error in useExistingItem:', err);
-    console.error('Error response:', err.response?.data);
     toast.add({ 
       severity: 'error', 
       summary: 'Error', 
@@ -303,6 +300,11 @@ const createAndAddItem = async (originalName, index) => {
 </script>
 
 <style scoped>
+.shopping-list-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
 .shoppinglist {
   display: flex;
   flex-direction: column;

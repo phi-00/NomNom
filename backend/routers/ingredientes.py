@@ -225,20 +225,12 @@ async def get_user_inventory(user_email: str):
     try:
         supabase = get_supabase_client()
         
-        print(f"DEBUG - Fetching inventory for user: {user_email}")
-        
         response = supabase.table("Inventário").select(
             "idIngrediente, idUtilizador, quantidade, Ingrediente(id, nome, grupo_alimentar, unidade_medida, calorias)"
         ).eq("idUtilizador", user_email).execute()
         
-        print(f"DEBUG - Raw response data: {response.data}")
-        print(f"DEBUG - Number of items: {len(response.data) if response.data else 0}")
-        
         inventory = []
         for item in response.data:
-            print(f"DEBUG - Processing item: {item}")
-            print(f"DEBUG - Has Ingrediente key: {item.get('Ingrediente') is not None}")
-            
             if item.get('Ingrediente'):
                 inventory.append({
                     "idIngrediente": item["idIngrediente"],
@@ -249,18 +241,10 @@ async def get_user_inventory(user_email: str):
                     "unidade_medida": item["Ingrediente"]["unidade_medida"],
                     "calorias": item["Ingrediente"]["calorias"]
                 })
-            else:
-                print(f"WARNING - Item without Ingrediente relationship: {item}")
-        
-        print(f"DEBUG - Final inventory count: {len(inventory)}")
-        print(f"DEBUG - Final inventory: {inventory}")
         
         return inventory
         
     except Exception as e:
-        print(f"ERROR - Exception in get_user_inventory: {e}")
-        import traceback
-        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao abrir frigorífico: {str(e)}"
@@ -284,9 +268,6 @@ async def add_to_inventory(inventory_item: Dict[str, Any]):
         id_ingrediente = inventory_item.get("idIngrediente")
         quantidade = inventory_item.get("quantidade", 1)
         
-        print(f"DEBUG - Received data: {inventory_item}")
-        print(f"DEBUG - idUtilizador: {id_utilizador}, idIngrediente: {id_ingrediente}, quantidade: {quantidade}")
-        
         if not id_utilizador or not id_ingrediente:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -294,38 +275,26 @@ async def add_to_inventory(inventory_item: Dict[str, Any]):
             )
         
         # Check if item already exists in inventory
-        print(f"DEBUG - Checking existing items...")
         existing = supabase.table("Inventário").select("*").eq(
             "idUtilizador", id_utilizador
         ).eq("idIngrediente", id_ingrediente).execute()
         
-        print(f"DEBUG - Existing items: {existing.data}")
-        print(f"DEBUG - Existing count: {len(existing.data) if existing.data else 0}")
-        
         if existing.data and len(existing.data) > 0:
             # Update existing quantity
             new_quantity = existing.data[0]["quantidade"] + quantidade
-            print(f"DEBUG - Updating quantity to: {new_quantity}")
             response = supabase.table("Inventário").update({
                 "quantidade": new_quantity
             }).eq("idUtilizador", id_utilizador).eq(
                 "idIngrediente", id_ingrediente
             ).execute()
-            print(f"DEBUG - Update response: {response}")
         else:
             # Insert new item
-            print(f"DEBUG - Inserting new item with data: {{idUtilizador: {id_utilizador}, idIngrediente: {id_ingrediente}, quantidade: {quantidade}}}")
             response = supabase.table("Inventário").insert({
                 "idUtilizador": id_utilizador,
                 "idIngrediente": id_ingrediente,
                 "quantidade": quantidade
             }).execute()
-            print(f"DEBUG - Insert response: {response}")
-            print(f"DEBUG - Insert response data: {response.data}")
-        
-        if hasattr(response, 'data'):
-            print(f"DEBUG - Final response data: {response.data}")
-        
+                
         return {
             "message": "Item adicionado ao inventário com sucesso",
             "data": response.data if hasattr(response, 'data') else None
@@ -334,9 +303,6 @@ async def add_to_inventory(inventory_item: Dict[str, Any]):
     except HTTPException:
         raise
     except Exception as e:
-        print(f"ERROR - Full exception: {e}")
-        import traceback
-        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao adicionar item ao inventário: {str(e)}"
