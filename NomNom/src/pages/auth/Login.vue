@@ -95,9 +95,18 @@ const handleLogin = async () => {
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
 
+    // Verificar se o perfil está completo
+    const profileComplete = response.data.profile_complete || false;
+    
     // Redirecionar após 1 segundo
     setTimeout(() => {
-      router.push('/recipes');
+      if (!profileComplete) {
+        // Se perfil não está completo, redirecionar para completar perfil
+        router.push('/complete-profile');
+      } else {
+        // Se perfil está completo, redirecionar para recipes
+        router.push('/recipes');
+      }
     }, 1000);
 
   } catch (err) {

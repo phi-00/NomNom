@@ -10,11 +10,13 @@ import Profile from './pages/user_profile/Profile.vue'
 import IngredientsColumns from './pages/IngredientsColumns.vue'
 import Login from './pages/auth/Login.vue'
 import Register from './pages/auth/Register.vue'
+import CompleteProfile from './pages/auth/CompleteProfile.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home, meta: { requiresAuth: false } },
   { path: '/login', name: 'Login', component: Login, meta: { requiresAuth: false } },
   { path: '/register', name: 'Register', component: Register, meta: { requiresAuth: false } },
+  { path: '/complete-profile', name: 'CompleteProfile', component: CompleteProfile, meta: { requiresAuth: true } },
   { path: '/recipes', name: 'Recipes', component: Recipes, meta: { requiresAuth: true } },
   { path: '/recipes/:id', name: 'RecipeDetail', component: RecipeDetail, meta: { requiresAuth: true } },
   { path: '/recipes/myrecipes', name: 'MyRecipes', component: MyRecipes, meta: { requiresAuth: true } },

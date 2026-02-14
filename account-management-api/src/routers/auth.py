@@ -27,6 +27,7 @@ class LoginResponse(BaseModel):
     expires_in: int
     token_type: str = "bearer"
     message: str = "Login realizado com sucesso"
+    profile_complete: bool = False
 
 
 class RegisterResponse(BaseModel):
@@ -118,13 +119,23 @@ async def login(credentials: LoginRequest):
             created_at=auth_response.user.created_at
         )
         
+        # Verificar se existe perfil completo na tabela Utilizador
+        profile_complete = False
+        try:
+            utilizador_response = supabase.table("Utilizador").select("*").eq("email", credentials.email).execute()
+            profile_complete = bool(utilizador_response.data and len(utilizador_response.data) > 0)
+        except Exception as e:
+            print(f"Aviso: Erro ao verificar perfil de utilizador: {str(e)}")
+            profile_complete = False
+        
         return LoginResponse(
             user=user_response,
             access_token=auth_response.session.access_token,
             refresh_token=auth_response.session.refresh_token,
             expires_in=auth_response.session.expires_in,
             token_type="bearer",
-            message="Login realizado com sucesso"
+            message="Login realizado com sucesso",
+            profile_complete=profile_complete
         )
         
     except AuthApiError as e:

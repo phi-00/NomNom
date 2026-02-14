@@ -121,7 +121,7 @@ const handleRegister = async () => {
       password: formData.value.password
     });
 
-    success.value = 'Conta criada com sucesso! Redirecionando...';
+    success.value = 'Conta criada com sucesso! Complete seu perfil...';
     
     // Salvar token se retornado
     if (response.data.session?.access_token) {
@@ -131,8 +131,8 @@ const handleRegister = async () => {
     }
 
     setTimeout(() => {
-      router.push('/recipes');
-    }, 2000);
+      router.push('/complete-profile');
+    }, 1500);
 
   } catch (err) {
     console.error('Erro ao registrar:', err);
