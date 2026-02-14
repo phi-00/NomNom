@@ -69,120 +69,13 @@ import { useRecipes } from '../../composables/useRecipes';
 const router = useRouter();
 const { minhasReceitas, outrasReceitas, loading, error, fetchAllRecipes } = useRecipes();
 
-// Dados default em caso de não haver dados no Supabase
-const defaultMyRecipes = ref([
-  {
-    id: 1,
-    name: 'Spaghetti Carbonara',
-    description: 'Classic Italian pasta dish',
-    time: '30 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400'
-  },
-  {
-    id: 2,
-    name: 'Caesar Salad',
-    description: 'Fresh and crispy salad',
-    time: '15 min',
-    tags: ['Vegan', 'Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400'
-  },
-  {
-    id: 3,
-    name: 'Grilled Salmon',
-    description: 'Healthy and delicious',
-    time: '25 min',
-    tags: ['Sem Glúten', 'Paleo'],
-    image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400'
-  },
-  {
-    id: 7,
-    name: 'Pasta Primavera',
-    description: 'Light and colorful vegetables',
-    time: '20 min',
-    tags: ['Vegan', 'Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400'
-  },
-  {
-    id: 8,
-    name: 'Beef Steak',
-    description: 'Juicy and tender meat',
-    time: '35 min',
-    tags: ['Paleo', 'Sem Glúten'],
-    image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=400'
-  },
-  {
-    id: 9,
-    name: 'Mushroom Risotto',
-    description: 'Creamy and savory rice dish',
-    time: '40 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1476124369162-2f4ee5ddc096?w=400'
-  }
-]);
-
-const defaultOtherRecipes = ref([
-  {
-    id: 4,
-    name: 'Chocolate Cake',
-    description: 'Rich and moist dessert',
-    time: '45 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400'
-  },
-  {
-    id: 5,
-    name: 'Chicken Curry',
-    description: 'Spicy and flavorful',
-    time: '40 min',
-    tags: ['Paleo', 'Sem Glúten'],
-    image: 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=400'
-  },
-  {
-    id: 6,
-    name: 'Vegetable Stir Fry',
-    description: 'Quick and healthy',
-    time: '20 min',
-    tags: ['Vegan', 'Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400'
-  },
-  {
-    id: 10,
-    name: 'Tacos Al Pastor',
-    description: 'Traditional Mexican flavors',
-    time: '25 min',
-    tags: ['Paleo'],
-    image: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=400'
-  },
-  {
-    id: 11,
-    name: 'Pad Thai',
-    description: 'Thai noodle stir fry',
-    time: '30 min',
-    tags: ['Vegan'],
-    image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=400'
-  },
-  {
-    id: 12,
-    name: 'Tiramisu',
-    description: 'Classic Italian dessert',
-    time: '20 min',
-    tags: ['Vegetariana'],
-    image: 'https://images.unsplash.com/photo-1571877227200-a0fb08a01a09?w=400'
-  }
-]);
-
-// Dados para exibir: usa do Supabase ou defaults
+// Dados para exibir: usa do Supabase
 const myRecipes = computed(() => {
-  return minhasReceitas.value && minhasReceitas.value.length > 0 
-    ? minhasReceitas.value 
-    : defaultMyRecipes.value;
+  return minhasReceitas.value || [];
 });
 
 const otherRecipes = computed(() => {
-  return outrasReceitas.value && outrasReceitas.value.length > 0 
-    ? outrasReceitas.value 
-    : defaultOtherRecipes.value;
+  return outrasReceitas.value || [];
 });
 
 const responsiveOptions = ref([
