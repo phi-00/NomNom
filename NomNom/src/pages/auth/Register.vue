@@ -129,9 +129,8 @@ const handleRegister = async () => {
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
 
-    // Redirecionar para login após 2 segundos
     setTimeout(() => {
-      router.push('/login');
+      router.push('/recipes');
     }, 2000);
 
   } catch (err) {
