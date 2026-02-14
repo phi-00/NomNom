@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import get_settings
+from routers import auth
 
-# Importar routers aqui quando criar
+# Importar outros routers aqui quando criar
 # from routers import example
 
 settings = get_settings()
@@ -40,7 +41,10 @@ async def health_check():
     return {"status": "healthy"}
 
 
-# Incluir routers aqui quando criar
+# Routers
+app.include_router(auth.router, prefix="/api/v1/auth", tags=["Autenticação"])
+
+# Incluir outros routers aqui quando criar
 # app.include_router(example.router, prefix="/api/v1", tags=["example"])
 
 

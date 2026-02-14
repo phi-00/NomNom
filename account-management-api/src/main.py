@@ -1,0 +1,32 @@
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from src.routers import auth, accounts
+
+app = FastAPI(
+    title="Account Management API",
+    description="API de gerenciamento de contas usando FastAPI e Supabase",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Middleware configuration
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Adjust this as needed for production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include routers
+app.include_router(auth.router)
+app.include_router(accounts.router)
+
+@app.get("/")
+def read_root():
+    return {
+        "message": "Welcome to the Account Management API",
+        "docs": "/docs",
+        "redoc": "/redoc"
+    }
