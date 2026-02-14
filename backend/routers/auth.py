@@ -62,16 +62,28 @@ async def register(user_data: UserCreate):
         )
         
     except AuthApiError as e:
-        if "already registered" in str(e).lower():
+        error_msg = str(e).lower()
+        if "already registered" in error_msg:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Este email já está registrado."
+            )
+        elif "rate limit" in error_msg:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Muitas tentativas de registro. Aguarde alguns minutos ou use outro email."
             )
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Erro de autenticação: {str(e)}"
         )
     except Exception as e:
+        error_msg = str(e).lower()
+        if "rate limit" in error_msg:
+            raise HTTPException(
+                status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+                detail="Muitas tentativas de registro. Aguarde alguns minutos ou use outro email."
+            )
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao criar conta: {str(e)}"

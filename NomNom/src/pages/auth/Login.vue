@@ -89,8 +89,9 @@ const handleLogin = async () => {
     success.value = 'Login realizado com sucesso! Redirecionando...';
     
     // Salvar token e dados do usuário
-    if (response.data.session?.access_token) {
-      localStorage.setItem('access_token', response.data.session.access_token);
+    if (response.data.access_token) {
+      localStorage.setItem('access_token', response.data.access_token);
+      localStorage.setItem('refresh_token', response.data.refresh_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
 

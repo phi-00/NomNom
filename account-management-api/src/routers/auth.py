@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, EmailStr
 from src.database import get_supabase_client
-from src.schemas.account import AccountResponse
+from src.schemas.account import AccountResponse, AccountCreate
+from src.services.account_service import account_service
 from gotrue.errors import AuthApiError
 
 router = APIRouter(
@@ -26,6 +27,64 @@ class LoginResponse(BaseModel):
     expires_in: int
     token_type: str = "bearer"
     message: str = "Login realizado com sucesso"
+
+
+class RegisterResponse(BaseModel):
+    """Schema para resposta de registro"""
+    user: AccountResponse
+    session: dict
+    message: str = "Conta criada com sucesso"
+
+
+@router.post("/register", response_model=RegisterResponse, status_code=status.HTTP_201_CREATED)
+async def register(account_data: AccountCreate):
+    """
+    Registra um novo usuário e faz login automático
+    
+    - **name**: Nome do usuário (2-100 caracteres)
+    - **email**: Email válido
+    - **password**: Senha (mínimo 6 caracteres)
+    
+    Retorna os dados do usuário e tokens de autenticação.
+    """
+    try:
+        # Criar conta usando o serviço
+        account = await account_service.create_account(account_data)
+        
+        # Fazer login automático após registro
+        auth_response = supabase.auth.sign_in_with_password({
+            "email": account_data.email,
+            "password": account_data.password
+        })
+        
+        session_data = {
+            "access_token": auth_response.session.access_token,
+            "refresh_token": auth_response.session.refresh_token,
+            "expires_in": auth_response.session.expires_in,
+            "token_type": "bearer"
+        }
+        
+        return RegisterResponse(
+            user=account,
+            session=session_data,
+            message="Conta criada com sucesso"
+        )
+        
+    except ValueError as e:
+        if "já está registrado" in str(e):
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=str(e)
+            )
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao criar conta: {str(e)}"
+        )
 
 
 @router.post("/login", response_model=LoginResponse)
