@@ -59,6 +59,29 @@ export function useIngredients() {
     }
   };
 
+  const fetchUserInventory = async (userEmail) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await apiClient.get(`/api/v1/ingredientes/inventário/${userEmail}`);
+      ingredientes.value = response.data;
+      
+      // Se response.data é um array com dados, extrair as colunas
+      if (response.data && response.data.length > 0) {
+        const keys = Object.keys(response.data[0]);
+        columns.value = keys.map(key => ({ column_name: key }));
+      }
+      
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.detail || 'Erro ao buscar inventário';
+      console.error('Erro ao buscar inventário:', err);
+      return [];
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     columns,
     ingredientes,
@@ -69,5 +92,6 @@ export function useIngredients() {
     fetchColumns,
     fetchPreview,
     fetchIngredientes,
+    fetchUserInventory,
   };
 }
