@@ -132,23 +132,17 @@ export function useIngredients() {
     loading.value = true;
     error.value = null;
     try {
-      console.log('addToInventory called with:', { userEmail, ingredientId, quantity });
-      
       const payload = {
         idUtilizador: userEmail,
-        idIngrediente: Number(ingredientId), // Ensure it's a number
-        quantidade: Number(quantity) // Ensure it's a number
+        idIngrediente: Number(ingredientId),
+        quantidade: Number(quantity)
       };
       
-      console.log('Payload being sent:', payload);
-      
       const response = await apiClient.post('/api/v1/ingredientes/inventario', payload);
-      console.log('Response from server:', response.data);
       return response.data;
     } catch (err) {
       error.value = err.response?.data?.detail || 'Erro ao adicionar ao inventário';
       console.error('Erro ao adicionar ao inventário:', err);
-      console.error('Error response:', err.response?.data);
       throw err;
     } finally {
       loading.value = false;
