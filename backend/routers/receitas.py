@@ -459,3 +459,107 @@ async def get_recipe_with_ingredients(recipe_id: int):
             detail=f"Erro ao buscar receita com ingredientes: {str(e)}"
         )
 
+
+@router.post("/toggle-favorite")
+async def toggle_favorite(payload: dict):
+    """
+    Adiciona ou remove uma receita dos favoritos do usuário
+    
+    Payload:
+    - user_email: email do usuário
+    - recipe_id: ID da receita
+    - is_favorite: true para adicionar, false para remover
+    """
+    try:
+        user_email = payload.get("user_email")
+        recipe_id = payload.get("recipe_id")
+        is_favorite = payload.get("is_favorite")
+        
+        if not user_email or recipe_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="user_email e recipe_id são obrigatórios"
+            )
+        
+        if is_favorite is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="is_favorite é obrigatório"
+            )
+        
+        supabase = get_supabase_client()
+        
+        # Verificar se o registro já existe
+        try:
+            existing = (
+                supabase.table("ReceitaUtilizador")
+                .select("*")
+                .eq("idUtilizador", user_email)
+                .eq("idReceita", recipe_id)
+                .execute()
+            )
+            
+            if existing.data and len(existing.data) > 0:
+                # Atualizar registro existente
+                supabase.table("ReceitaUtilizador").update(
+                    {"favorita": is_favorite}
+                ).eq("idUtilizador", user_email).eq("idReceita", recipe_id).execute()
+                
+                return {
+                    "success": True,
+                    "message": f"Receita {'adicionada aos' if is_favorite else 'removida dos'} favoritos",
+                    "is_favorite": is_favorite
+                }
+            else:
+                # Inserir novo registro
+                supabase.table("ReceitaUtilizador").insert({
+                    "idUtilizador": user_email,
+                    "idReceita": recipe_id,
+                    "favorita": is_favorite
+                }).execute()
+                
+                return {
+                    "success": True,
+                    "message": f"Receita {'adicionada aos' if is_favorite else 'removida dos'} favoritos",
+                    "is_favorite": is_favorite
+                }
+        
+        except Exception as e:
+            error_str = str(e)
+            
+            # Se o erro é de foreign key, significa que o usuário não existe
+            if "violates foreign key" in error_str or "idUtilizador" in error_str:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Usuário não encontrado. Por favor, complete seu perfil primeiro."
+                )
+            
+            # Para outros erros, tentar inserir diretamente
+            print(f"Erro ao atualizar/inserir ReceitaUtilizador: {str(e)}")
+            
+            try:
+                supabase.table("ReceitaUtilizador").insert({
+                    "idUtilizador": user_email,
+                    "idReceita": recipe_id,
+                    "favorita": is_favorite
+                }).execute()
+                
+                return {
+                    "success": True,
+                    "message": f"Receita {'adicionada aos' if is_favorite else 'removida dos'} favoritos",
+                    "is_favorite": is_favorite
+                }
+            except Exception as insert_err:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Erro ao salvar favorito: {str(insert_err)}"
+                )
+    
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao fazer toggle de favorito: {str(e)}"
+        )
+

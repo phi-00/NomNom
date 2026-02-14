@@ -85,6 +85,20 @@
       <div v-if="recipe.num_etapas" class="recipe-footer">
         <p>Total de {{ recipe.num_etapas }} etapas</p>
       </div>
+
+      <!-- Botão de Favorito -->
+      <div class="recipe-actions">
+        <button 
+          @click="toggleFavorite"
+          :disabled="toggleLoadingFavorite"
+          :class="{ 'favorite': isFavorite }"
+          class="btn-favorite"
+        >
+          <span v-if="toggleLoadingFavorite" class="loading-spinner">⏳</span>
+          <span v-else-if="isFavorite">❤️ Remover dos Favoritos</span>
+          <span v-else>🤍 Adicionar aos Favoritos</span>
+        </button>
+      </div>
     </div>
     
     <div v-else class="not-found">
@@ -94,7 +108,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import apiClient from '../../api/client';
 
@@ -104,6 +118,13 @@ const router = useRouter();
 const recipe = ref(null);
 const loading = ref(true);
 const error = ref(null);
+const isFavorite = ref(false);
+const toggleLoadingFavorite = ref(false);
+
+const userEmail = computed(() => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  return user.email || null;
+});
 
 onMounted(async () => {
   loading.value = true;
@@ -114,6 +135,11 @@ onMounted(async () => {
     const recipeId = route.params.id;
     const response = await apiClient.get(`/api/v1/receitas/${recipeId}`);
     recipe.value = response.data;
+    
+    // Verificar se está nos favoritos (se usuário está logado)
+    if (userEmail.value) {
+      await checkIfFavorite();
+    }
   } catch (err) {
     error.value = err.response?.data?.detail || 'Erro ao buscar receita';
     console.error('Erro ao buscar receita:', err);
@@ -124,6 +150,56 @@ onMounted(async () => {
     loading.value = false;
   }
 });
+
+const checkIfFavorite = async () => {
+  try {
+    if (!userEmail.value || !recipe.value) return;
+    
+    // Buscar receitas favoritas do usuário
+    const response = await apiClient.get('/api/v1/receitas/minhas', {
+      params: { user_email: userEmail.value }
+    });
+    
+    const favoriteIds = (response.data || []).map(r => r.id);
+    isFavorite.value = favoriteIds.includes(recipe.value.id);
+  } catch (err) {
+    console.error('Erro ao verificar favorito:', err);
+  }
+};
+
+const toggleFavorite = async () => {
+  if (!userEmail.value) {
+    alert('Por favor, faça login para adicionar aos favoritos');
+    return;
+  }
+  
+  if (!recipe.value) return;
+
+  toggleLoadingFavorite.value = true;
+  
+  try {
+    const action = isFavorite.value ? 'remover' : 'adicionar';
+    
+    await apiClient.post('/api/v1/receitas/toggle-favorite', {
+      user_email: userEmail.value,
+      recipe_id: recipe.value.id,
+      is_favorite: !isFavorite.value
+    });
+    
+    isFavorite.value = !isFavorite.value;
+    
+    const message = isFavorite.value 
+      ? '❤️ Receita adicionada aos favoritos!' 
+      : '💔 Receita removida dos favoritos';
+    
+    console.log(message);
+  } catch (err) {
+    error.value = err.response?.data?.detail || `Erro ao ${isFavorite.value ? 'remover' : 'adicionar'} favorito`;
+    console.error('Erro:', err);
+  } finally {
+    toggleLoadingFavorite.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -370,6 +446,67 @@ onMounted(async () => {
   font-weight: 500;
 }
 
+/* Estilos para Ações da Receita */
+.recipe-actions {
+  padding: 2rem;
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.btn-favorite {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  border: 2px solid var(--accent-color);
+  background: white;
+  color: var(--accent-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-favorite:hover:not(:disabled) {
+  background: var(--accent-color);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(26, 179, 148, 0.3);
+}
+
+.btn-favorite.favorite {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  border-color: #ee5a6f;
+  color: white;
+}
+
+.btn-favorite.favorite:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff7d7d 0%, #f07281 100%);
+  border-color: #f07281;
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-favorite:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.loading-spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 @media (max-width: 768px) {
   .recipe-detail-container {
     padding: 1rem;
@@ -410,6 +547,17 @@ onMounted(async () => {
 
   .ingrediente-calorias {
     text-align: left;
+  }
+
+  .recipe-actions {
+    padding: 1.5rem;
+  }
+
+  .btn-favorite {
+    width: 100%;
+    justify-content: center;
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
   }
 }
 </style>
