@@ -82,10 +82,13 @@ onMounted(() => {
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap');
+
 .ingredientes-container {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .header {

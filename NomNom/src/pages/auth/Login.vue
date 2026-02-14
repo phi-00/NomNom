@@ -2,7 +2,7 @@
   <div class="auth-container">
     <div class="auth-card">
       <div class="auth-header">
-        <h1>🍔 Bem-vindo de Volta!</h1>
+        <h1>Bem-vindo de Volta!</h1>
         <p>Entre na sua conta para continuar</p>
       </div>
 
@@ -81,7 +81,7 @@ const handleLogin = async () => {
   loading.value = true;
 
   try {
-    const response = await apiClient.post('/auth/login', {
+    const response = await apiClient.post('/api/v1/auth/login', {
       email: formData.value.email,
       password: formData.value.password
     });
@@ -89,8 +89,8 @@ const handleLogin = async () => {
     success.value = 'Login realizado com sucesso! Redirecionando...';
     
     // Salvar token e dados do usuário
-    if (response.data.access_token) {
-      localStorage.setItem('access_token', response.data.access_token);
+    if (response.data.session?.access_token) {
+      localStorage.setItem('access_token', response.data.session.access_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
 
@@ -109,13 +109,16 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap');
+
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #ffffff 100%);
   padding: 2rem;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .auth-card {
@@ -180,12 +183,18 @@ const handleLogin = async () => {
   border-radius: 8px;
   font-size: 1rem;
   transition: all 0.3s;
+  background: white;
+  color: #000;
+}
+
+.form-group input::placeholder {
+  color: #999;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #1ab394;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1);
 }
 
 .form-group input:disabled {
@@ -212,7 +221,7 @@ const handleLogin = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15935f 100%);
   color: white;
   border: none;
   padding: 1rem;
@@ -248,14 +257,14 @@ const handleLogin = async () => {
 }
 
 .link {
-  color: #667eea;
+  color: #1ab394;
   text-decoration: none;
   font-weight: 600;
   transition: color 0.3s;
 }
 
 .link:hover {
-  color: #764ba2;
+  color: #15935f;
   text-decoration: underline;
 }
 

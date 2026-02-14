@@ -161,25 +161,25 @@ watch(() => route.path, () => {
 }
 
 .btn-login {
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: #1ab394;
+  border: 2px solid #1ab394;
   background: white;
 }
 
 .btn-login:hover {
-  background: #667eea;
+  background: #1ab394;
   color: white;
 }
 
 .btn-register {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15935f 100%);
   color: white;
   border: 2px solid transparent;
 }
 
 .btn-register:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 12px rgba(26, 179, 148, 0.4);
 }
 
 @media (max-width: 768px) {
