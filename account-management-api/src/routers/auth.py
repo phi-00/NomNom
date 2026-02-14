@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Header
 from pydantic import BaseModel, EmailStr
 from src.database import get_supabase_client
 from src.schemas.account import AccountResponse, AccountCreate
@@ -201,4 +201,168 @@ async def get_current_user():
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Token inválido ou expirado"
+        )
+
+
+class UpdateNameRequest(BaseModel):
+    """Schema para atualizar nome do usuário"""
+    email: EmailStr
+    name: str
+
+
+@router.post("/update-name")
+async def update_name(data: UpdateNameRequest, authorization: str = Header(None)):
+    """
+    Atualiza o nome do utilizador
+    
+    Requer autenticação via Bearer token
+    
+    - **email**: Email do utilizador
+    - **name**: Novo nome (2-100 caracteres)
+    """
+    try:
+        # Validar token
+        if not authorization or not authorization.startswith("Bearer "):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="This endpoint requires a valid Bearer token"
+            )
+        
+        token = authorization[7:]  # Remove "Bearer " prefix
+        
+        # Validar comprimento do nome
+        if len(data.name.strip()) < 2:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="O nome deve ter pelo menos 2 caracteres"
+            )
+        
+        if len(data.name.strip()) > 100:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="O nome não pode exceder 100 caracteres"
+            )
+        
+        # Usar Supabase para obter usuário com o token
+        from supabase import create_client
+        from src.config import get_settings
+        
+        settings = get_settings()
+        supabase_auth = create_client(settings.supabase_url, settings.supabase_key)
+        
+        try:
+            # Obter usuário com o token
+            user = supabase_auth.auth.get_user(token)
+            
+            if not user or not user.user:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token inválido ou expirado"
+                )
+            
+            user_id = user.user.id
+            
+            # Atualizar metadata do usuário usando admin API
+            supabase_auth.auth.admin.update_user_by_id(
+                user_id,
+                {"user_metadata": {"name": data.name.strip()}}
+            )
+            
+            return {
+                "message": "Nome atualizado com sucesso",
+                "name": data.name.strip(),
+                "email": user.user.email
+            }
+        except Exception as e:
+            print(f"Erro ao atualizar nome: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Erro ao verificar token: {str(e)}"
+            )
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"Erro geral: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Erro ao atualizar nome: {str(e)}"
+        )
+
+
+class ProfilePictureUpdate(BaseModel):
+    """Schema para atualizar foto de perfil"""
+    profile_picture: str  # Base64 encoded image
+    email: EmailStr
+
+
+@router.post("/profile-picture")
+async def update_profile_picture(data: ProfilePictureUpdate, authorization: str = Header(None)):
+    """
+    Atualiza a foto de perfil do utilizador
+    
+    Requer autenticação via Bearer token
+    
+    Recebe a imagem em base64 e armazena nos metadados do usuário
+    """
+    try:
+        # Validar token
+        if not authorization or not authorization.startswith("Bearer "):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="This endpoint requires a valid Bearer token"
+            )
+        
+        token = authorization[7:]  # Remove "Bearer " prefix
+        
+        # Validar tamanho aproximado (base64 é ~1.33x maior)
+        if len(data.profile_picture) > 6.67 * 1024 * 1024:  # ~5MB em base64
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Imagem muito grande. Máximo 5MB"
+            )
+        
+        # Usar Supabase para obter usuário com o token
+        from supabase import create_client
+        from src.config import get_settings
+        
+        settings = get_settings()
+        supabase_auth = create_client(settings.supabase_url, settings.supabase_key)
+        
+        try:
+            # Obter usuário com o token
+            user = supabase_auth.auth.get_user(token)
+            
+            if not user or not user.user:
+                raise HTTPException(
+                    status_code=status.HTTP_401_UNAUTHORIZED,
+                    detail="Token inválido ou expirado"
+                )
+            
+            user_id = user.user.id
+            
+            # Atualizar metadata com a foto
+            supabase_auth.auth.admin.update_user_by_id(
+                user_id,
+                {"user_metadata": {"profile_picture": data.profile_picture}}
+            )
+            
+            return {
+                "message": "Foto de perfil atualizada com sucesso",
+                "profile_picture": data.profile_picture
+            }
+        except Exception as e:
+            print(f"Erro ao atualizar foto: {str(e)}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail=f"Erro ao verificar token: {str(e)}"
+            )
+        
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        print(f"Erro geral: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Erro ao atualizar foto de perfil: {str(e)}"
         )

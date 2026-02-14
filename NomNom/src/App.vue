@@ -25,9 +25,11 @@ watch(
 <template>
   <div class="app-container">
     <Navbar />
-    <transition :name="transitionName" mode="out-in">
-      <router-view />
-    </transition>
+    <router-view v-slot="{ Component }">
+      <transition :name="transitionName" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
