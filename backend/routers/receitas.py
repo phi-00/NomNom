@@ -476,9 +476,9 @@ async def get_outras_receitas_filtradas(
     Retorna receitas "outras" (não favoritas) com filtros aplicados
     
     Filtros disponíveis:
-    - dificuldade: Fácil, Médio, Difícil
-    - categoria: Pequeno-almoço, Almoço, Jantar, Lanche, Sobremesa
-    - tipo_cozinhado: Assado, Grelhado, Frito, Cozido, Cru
+    - dificuldade: facil, medio, dificil
+    - categoria: padaria, pastelaria, entrada, sopa, prato principal, bebida
+    - tipo_cozinhado: frito, assado, cozido, grelhado, estufado
     - tempo_min/tempo_max: Range de tempo de preparação em minutos
     - porcoes_min/porcoes_max: Range de número de porções
     - only_my_ingredients: Se true, retorna apenas receitas com ingredientes que o usuário tem
