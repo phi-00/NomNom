@@ -20,32 +20,40 @@
                   </div>
                   <div v-else>
                     <div  class="ingredient-item header-item">
-                      <span class="ingredient-quantity">Quantity</span>
-                      <span class="ingredient-quantity">Ingredient</span>
+                      <div class="quantity-column">
+                        <span class="column-header">Quantity</span>
+                      </div>
+                      <div class="ingredient-column">
+                        <span class="column-header">Ingredient</span>
+                      </div>
                     </div>
                     <div v-for="item in getIngredientsByGroup(tab.grupo_alimentar)" :key="item.idIngrediente" class="ingredient-item">
-                      <div class="quantity-controls">
-                        <Button 
-                          icon="pi pi-minus" 
-                          aria-label="Decrease quantity"
-                          rounded
-                          size="small"
-                          class="quantity-btn"
-                          @click="decreaseQuantity(item)"
-                          :disabled="loading"
-                        />
-                        <span class="ingredient-quantity">{{ item.quantidade }}</span>
-                        <Button 
-                          icon="pi pi-plus" 
-                          aria-label="Increase quantity"
-                          rounded
-                          size="small"
-                          class="quantity-btn"
-                          @click="increaseQuantity(item)"
-                          :disabled="loading"
-                        />
+                      <div class="quantity-column">
+                        <div class="quantity-controls">
+                          <Button 
+                            icon="pi pi-minus" 
+                            aria-label="Decrease quantity"
+                            rounded
+                            size="small"
+                            class="quantity-btn"
+                            @click="decreaseQuantity(item)"
+                            :disabled="loading"
+                          />
+                          <span class="ingredient-quantity">{{ item.quantidade }}</span>
+                          <Button 
+                            icon="pi pi-plus" 
+                            aria-label="Increase quantity"
+                            rounded
+                            size="small"
+                            class="quantity-btn"
+                            @click="increaseQuantity(item)"
+                            :disabled="loading"
+                          />
+                        </div>
                       </div>
-                      <span class="ingredient-name">{{ item.nome }}</span>
+                      <div class="ingredient-column">
+                        <span class="ingredient-name">{{ item.nome }}</span>
+                      </div>
                     </div>
                   </div>
                 </TabPanel>
@@ -452,7 +460,7 @@ h1 {
   padding: 0.75rem 3rem;
   margin: 0.5rem 0;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.2s;
 }
 
