@@ -41,13 +41,12 @@
         </div>
 
         <div v-if="searchPerformed && similarResults.length === 0" class="no-results">
-          No similar ingredients found.
+          <span>No similar ingredients found.</span>
           <Button 
             @click="showCreateDialog = true" 
             label="Create new" 
             icon="pi pi-plus"
             size="small"
-            severity="success"
             class="create-btn"
           />
         </div>
@@ -533,6 +532,28 @@ h3 {
   color: var(--text-secondary);
   padding: 1.5rem;
   font-style: italic;
+  background-color: rgba(26, 179, 148, 0.05);
+  border: 1px dashed rgba(26, 179, 148, 0.2);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+:deep(.create-btn) {
+  margin-top: 0.5rem !important;
+}
+
+:deep(.create-btn .p-button) {
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%) !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(26, 179, 148, 0.3) !important;
+}
+
+:deep(.create-btn .p-button:hover) {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(26, 179, 148, 0.4) !important;
 }
 
 /* Items Container */
@@ -623,6 +644,154 @@ h3 {
 
 .save-button:hover {
   background-color: #148f7a;
+}
+
+/* Dialog Customization */
+:deep(.p-dialog) {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+:deep(.p-dialog .p-dialog-header) {
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 1.5rem !important;
+  border-radius: 16px 16px 0 0 !important;
+}
+
+:deep(.p-dialog .p-dialog-header .p-dialog-title) {
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  color: white !important;
+}
+
+:deep(.p-dialog .p-dialog-content) {
+  padding: 2rem !important;
+  background-color: #ffffff !important;
+}
+
+:deep(.p-dialog-mask.p-component-overlay) {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Form styling */
+.create-form-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
+  font-size: 0.95rem !important;
+  letter-spacing: 0.5px;
+}
+
+.form-input {
+  padding: 0.75rem !important;
+  border: 2px solid rgba(26, 179, 148, 0.2) !important;
+  border-radius: 8px !important;
+  background-color: #f8f9fa !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+  transition: all 0.3s !important;
+}
+
+.form-input:focus {
+  outline: none !important;
+  border-color: #1ab394 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1) !important;
+}
+
+:deep(.form-input.p-inputtext) {
+  padding: 0.75rem !important;
+  border: 2px solid rgba(26, 179, 148, 0.2) !important;
+  border-radius: 8px !important;
+  background-color: #f8f9fa !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+  transition: all 0.3s !important;
+}
+
+:deep(.form-input.p-inputtext:focus) {
+  outline: none !important;
+  border-color: #1ab394 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1) !important;
+}
+
+:deep(.form-input.p-dropdown) {
+  padding: 0.75rem !important;
+  border: 2px solid rgba(26, 179, 148, 0.2) !important;
+  border-radius: 8px !important;
+  background-color: #f8f9fa !important;
+  transition: all 0.3s !important;
+}
+
+:deep(.form-input.p-dropdown:focus) {
+  outline: none !important;
+  border-color: #1ab394 !important;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1) !important;
+}
+
+:deep(.form-input.p-inputnumber .p-inputnumber-input) {
+  padding: 0.75rem !important;
+  border: 2px solid rgba(26, 179, 148, 0.2) !important;
+  border-radius: 8px !important;
+  background-color: #f8f9fa !important;
+  transition: all 0.3s !important;
+}
+
+:deep(.form-input.p-inputnumber .p-inputnumber-input:focus) {
+  outline: none !important;
+  border-color: #1ab394 !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1) !important;
+}
+
+/* Dialog Footer */
+:deep(.p-dialog .p-dialog-footer) {
+  border-top: 1px solid rgba(26, 179, 148, 0.1) !important;
+  padding: 1.5rem 2rem !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0 0 16px 16px !important;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+:deep(.p-dialog-footer .p-button) {
+  font-family: 'Nunito Sans', sans-serif !important;
+  font-weight: 600 !important;
+}
+
+:deep(.p-dialog-footer .p-button.p-button-secondary) {
+  background-color: #e0e0e0 !important;
+  color: var(--text-primary) !important;
+  border: none !important;
+}
+
+:deep(.p-dialog-footer .p-button.p-button-secondary:hover) {
+  background-color: #d0d0d0 !important;
+}
+
+:deep(.p-dialog-footer .p-button.p-button-success) {
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 15px rgba(26, 179, 148, 0.3) !important;
+}
+
+:deep(.p-dialog-footer .p-button.p-button-success:hover) {
+  box-shadow: 0 6px 20px rgba(26, 179, 148, 0.4) !important;
+  transform: translateY(-2px) !important;
 }
 </style>
 

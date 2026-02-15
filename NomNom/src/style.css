@@ -140,6 +140,46 @@ body {
   color: var(--text-primary) !important;
 }
 
+/* Dialog Customization */
+.p-dialog {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-dialog .p-dialog-header {
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 1.5rem !important;
+  border-radius: 16px 16px 0 0 !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-dialog .p-dialog-header .p-dialog-title {
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  color: white !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 2rem !important;
+  background-color: #ffffff !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-dialog-mask.p-component-overlay {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+}
+
+.p-dialog .p-dialog-footer {
+  border-top: 1px solid rgba(26, 179, 148, 0.1) !important;
+  padding: 1.5rem 2rem !important;
+  background-color: #f8f9fa !important;
+  border-radius: 0 0 16px 16px !important;
+}
+
 /* Additional specificity for PrimeVue toast text */
 .p-component {
   font-family: 'Nunito Sans', sans-serif !important;
