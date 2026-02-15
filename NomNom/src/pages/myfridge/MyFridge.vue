@@ -20,32 +20,40 @@
                   </div>
                   <div v-else>
                     <div  class="ingredient-item header-item">
-                      <span class="ingredient-quantity">Quantity</span>
-                      <span class="ingredient-quantity">Ingredient</span>
+                      <div class="quantity-column">
+                        <span class="column-header">Quantity</span>
+                      </div>
+                      <div class="ingredient-column">
+                        <span class="column-header">Ingredient</span>
+                      </div>
                     </div>
                     <div v-for="item in getIngredientsByGroup(tab.grupo_alimentar)" :key="item.idIngrediente" class="ingredient-item">
-                      <div class="quantity-controls">
-                        <Button 
-                          icon="pi pi-minus" 
-                          aria-label="Decrease quantity"
-                          rounded
-                          size="small"
-                          class="quantity-btn"
-                          @click="decreaseQuantity(item)"
-                          :disabled="loading"
-                        />
-                        <span class="ingredient-quantity">{{ item.quantidade }}</span>
-                        <Button 
-                          icon="pi pi-plus" 
-                          aria-label="Increase quantity"
-                          rounded
-                          size="small"
-                          class="quantity-btn"
-                          @click="increaseQuantity(item)"
-                          :disabled="loading"
-                        />
+                      <div class="quantity-column">
+                        <div class="quantity-controls">
+                          <Button 
+                            icon="pi pi-minus" 
+                            aria-label="Decrease quantity"
+                            rounded
+                            size="small"
+                            class="quantity-btn"
+                            @click="decreaseQuantity(item)"
+                            :disabled="loading"
+                          />
+                          <span class="ingredient-quantity">{{ item.quantidade }}</span>
+                          <Button 
+                            icon="pi pi-plus" 
+                            aria-label="Increase quantity"
+                            rounded
+                            size="small"
+                            class="quantity-btn"
+                            @click="increaseQuantity(item)"
+                            :disabled="loading"
+                          />
+                        </div>
                       </div>
-                      <span class="ingredient-name">{{ item.nome }}</span>
+                      <div class="ingredient-column">
+                        <span class="ingredient-name">{{ item.nome }}</span>
+                      </div>
                     </div>
                   </div>
                 </TabPanel>
@@ -211,8 +219,9 @@
 
   const newIngredient = ref({
     nome: '',
-    calorias: null,
-    grupo_alimentar: ''
+    calorias: 0,
+    grupo_alimentar: '',
+    unidade_medida: 'g'
   });
 
   onMounted(async () => {
@@ -260,8 +269,9 @@
     // Clear new ingredient form when selecting from database
     newIngredient.value = {
       nome: '',
-      calorias: null,
-      grupo_alimentar: ''
+      calorias: 0,
+      grupo_alimentar: '',
+      unidade_medida: 'g'
     };
   };
 
@@ -302,7 +312,12 @@
       // If creating a new ingredient
       if (!selectedIngredient.value && newIngredient.value.nome) {
         console.log('Creating new ingredient:', newIngredient.value);
-        const created = await createIngredient(newIngredient.value);
+        // Ensure calorias is a number
+        const ingredientData = {
+          ...newIngredient.value,
+          calorias: Number(newIngredient.value.calorias) || 0
+        };
+        const created = await createIngredient(ingredientData);
         console.log('Created ingredient response:', created);
         
         // Try different possible ID field names
@@ -355,8 +370,9 @@
     dialogError.value = null;
     newIngredient.value = {
       nome: '',
-      calorias: null,
-      grupo_alimentar: ''
+      calorias: 0,
+      grupo_alimentar: '',
+      unidade_medida: 'g'
     };
   };
 
@@ -447,12 +463,12 @@ h1 {
 
 .ingredient-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 3rem;
   margin: 0.5rem 0;
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: 6px;
   transition: all 0.2s;
 }
 

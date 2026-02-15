@@ -93,7 +93,7 @@
 
           <!-- Servings -->
           <div class="filter-group">
-            <label class="filter-label">Número de Porções</label>
+            <label class="filter-label">Number of Portions</label>
             <div class="range-inputs">
               <input 
                 type="number" 
@@ -113,8 +113,8 @@
         </div>
 
         <div class="filter-actions">
-          <button class="clear-button" @click="clearFilters">Limpar Filtros</button>
-          <button class="apply-button" @click="applyFilters">Aplicar Filtros</button>
+          <button class="clear-button" @click="clearFilters">Clean Filters</button>
+          <button class="apply-button" @click="applyFilters">Apply Filters</button>
         </div>
       </div>
     </div>
