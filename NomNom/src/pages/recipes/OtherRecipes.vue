@@ -1,9 +1,18 @@
 <template>
   <section class="other-recipes">
-    <div class="header-section">
-      <h1>Other Recipes</h1>
+    <h1>Other Recipes</h1>
+
+    <!-- Search Bar and Filter Button -->
+    <div class="search-filter-container">
+      <input 
+        v-model="searchQuery" 
+        type="text" 
+        placeholder="Search recipe by name..." 
+        class="search-input"
+        @input="filterBySearch"
+      />
       <button class="filter-button" @click="showFilters = true">
-        🔍 Filtros
+        🔍 Filters
       </button>
     </div>
 
@@ -11,7 +20,7 @@
     <div v-if="showFilters" class="filter-overlay" @click.self="showFilters = false">
       <div class="filter-panel">
         <div class="filter-header">
-          <h2>Filtros de Pesquisa</h2>
+          <h2>Search Filters</h2>
           <button class="close-button" @click="showFilters = false">✕</button>
         </div>
         
@@ -20,13 +29,13 @@
           <div class="filter-group">
             <label class="checkbox-label">
               <input type="checkbox" v-model="filters.onlyMyIngredients" />
-              <span>Apenas ingredientes que você tem</span>
+              <span>Only ingredients you have</span>
             </label>
           </div>
 
           <!-- Difficulty -->
           <div class="filter-group">
-            <label class="filter-label">Nível de Dificuldade</label>
+            <label class="filter-label">Difficulty Level</label>
             <select v-model="filters.dificuldade">
               <option value="">Todos</option>
               <option value="facil">Fácil</option>
@@ -37,7 +46,7 @@
 
           <!-- Category -->
           <div class="filter-group">
-            <label class="filter-label">Categoria</label>
+            <label class="filter-label">Category</label>
             <select v-model="filters.categoria">
               <option value="">Todas</option>
               <option value="padaria">Padaria</option>
@@ -51,7 +60,7 @@
 
           <!-- Cooking Type -->
           <div class="filter-group">
-            <label class="filter-label">Tipo de Cozinhado</label>
+            <label class="filter-label">Cooking Type</label>
             <select v-model="filters.tipo_cozinhado">
               <option value="">Todos</option>
               <option value="frito">Frito</option>
@@ -64,7 +73,7 @@
 
           <!-- Preparation Time -->
           <div class="filter-group">
-            <label class="filter-label">Tempo de Preparação (minutos)</label>
+            <label class="filter-label">Preparation Time (minutes)</label>
             <div class="range-inputs">
               <input 
                 type="number" 
@@ -149,6 +158,7 @@ const router = useRouter();
 const { outrasReceitas, loading, error, fetchOutrasReceitasWithFilters } = useRecipes();
 
 const showFilters = ref(false);
+const searchQuery = ref('');
 const filters = ref({
   onlyMyIngredients: false,
   dificuldade: '',
@@ -161,7 +171,18 @@ const filters = ref({
 });
 
 const otherRecipes = computed(() => {
-  return outrasReceitas.value || [];
+  const recipes = outrasReceitas.value || [];
+  
+  // Filter by search query
+  if (searchQuery.value.trim() === '') {
+    return recipes;
+  }
+  
+  const query = searchQuery.value.toLowerCase();
+  return recipes.filter(recipe => {
+    const name = (recipe.nome || recipe.name || '').toLowerCase();
+    return name.includes(query);
+  });
 });
 
 onMounted(async () => {
@@ -222,6 +243,10 @@ const clearFilters = () => {
   loadRecipes();
 };
 
+const filterBySearch = () => {
+  // The computed property otherRecipes will automatically filter based on searchQuery
+};
+
 const goToRecipe = (recipeId) => {
   router.push(`/recipes/${recipeId}`);
 };
@@ -236,28 +261,54 @@ const goToRecipe = (recipeId) => {
   color: var(--text-primary);
 }
 
-.header-section {
+.search-filter-container {
   display: flex;
-  justify-content: space-between;
+  gap: 1rem;
   align-items: center;
   margin-bottom: 2rem;
+  margin-top: 2.5rem;
+  width: 100%;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.875rem 1.25rem;
+  font-size: 1rem;
+  border: 2px solid rgba(26, 179, 148, 0.3);
+  border-radius: 12px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #1ab394;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1);
+}
+
+.search-input::placeholder {
+  color: var(--text-secondary);
 }
 
 .filter-button {
   background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  padding: 0.875rem 1.75rem;
+  border-radius: 12px;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(26, 179, 148, 0.3);
 }
 
 .filter-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(26, 179, 148, 0.4);
 }
 
 /* Skeleton Loading */
@@ -513,7 +564,7 @@ const goToRecipe = (recipeId) => {
 }
 
 h1 {
-  color: var(--accent-color);
+  color: #1ab394;
   font-size: 2.5rem;
   margin: 0;
 }

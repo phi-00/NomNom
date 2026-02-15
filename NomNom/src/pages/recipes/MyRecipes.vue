@@ -1,6 +1,18 @@
 <template>
   <section class="my-recipes">
     <h1>My Recipes</h1>
+    
+    <!-- Search Bar -->
+    <div class="search-bar-wrapper">
+      <input 
+        v-model="searchQuery" 
+        type="text" 
+        placeholder="Search your recipes..." 
+        class="search-input-small"
+        @input="filterBySearch"
+      />
+    </div>
+
     <div v-if="loading" class="loading-skeleton">
       <div class="skeleton-card" v-for="i in 6" :key="i">
         <div class="skeleton-image"></div>
@@ -32,21 +44,37 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRecipes } from '../../composables/useRecipes';
 
 const router = useRouter();
 const { minhasReceitas, loading, error, fetchMinhasReceitas } = useRecipes();
+const searchQuery = ref('');
 
 const myRecipes = computed(() => {
-  return minhasReceitas.value || [];
+  const recipes = minhasReceitas.value || [];
+  
+  // Filter by search query
+  if (searchQuery.value.trim() === '') {
+    return recipes;
+  }
+  
+  const query = searchQuery.value.toLowerCase();
+  return recipes.filter(recipe => {
+    const name = (recipe.nome || recipe.name || '').toLowerCase();
+    return name.includes(query);
+  });
 });
 
 onMounted(async () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
   await fetchMinhasReceitas(user.email || null);
 });
+
+const filterBySearch = () => {
+  // The computed property myRecipes will automatically filter based on searchQuery
+};
 
 const goToRecipe = (recipeId) => {
   router.push(`/recipes/${recipeId}`);
@@ -77,9 +105,37 @@ const goToRecipe = (recipeId) => {
 }
 
 h1 {
-  color: var(--accent-color);
+  color: #1ab394;
   font-size: 2.5rem;
   margin-bottom: 2rem;
+}
+
+.search-bar-wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 2rem;
+}
+
+.search-input-small {
+  width: 350px;
+  padding: 0.85rem 1.1rem;
+  font-size: 1rem;
+  border: 2px solid rgba(26, 179, 148, 0.3);
+  border-radius: 10px;
+  background-color: var(--input-bg);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.search-input-small:focus {
+  outline: none;
+  border-color: #1ab394;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1);
+}
+
+.search-input-small::placeholder {
+  color: var(--text-secondary);
 }
 
 /* Skeleton Loading */
