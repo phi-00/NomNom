@@ -52,13 +52,12 @@ async def register(user_data: UserCreate):
         
         return LoginResponse(
             user=user_response,
-            session={
-                "access_token": auth_response.session.access_token if auth_response.session else "",
-                "refresh_token": auth_response.session.refresh_token if auth_response.session else "",
-                "expires_in": auth_response.session.expires_in if auth_response.session else 0,
-                "token_type": auth_response.session.token_type if auth_response.session else "bearer"
-            },
-            message="Conta criada com sucesso"
+            access_token=auth_response.session.access_token if auth_response.session else "",
+            refresh_token=auth_response.session.refresh_token if auth_response.session else "",
+            expires_in=auth_response.session.expires_in if auth_response.session else 0,
+            token_type="bearer",
+            message="Conta criada com sucesso",
+            profile_complete=False  # Perfil não está completo após registro
         )
         
     except AuthApiError as e:
@@ -178,16 +177,21 @@ async def login(credentials: LoginRequest):
             )
         
         # Buscar dados adicionais do usuário na tabela Utilizador
+        # E verificar se o perfil está completo
+        profile_complete = False
         try:
             utilizador_response = supabase.table("Utilizador").select("*").eq("email", credentials.email).execute()
             
             if utilizador_response.data and len(utilizador_response.data) > 0:
                 nome = utilizador_response.data[0].get("nome", auth_response.user.user_metadata.get("name", ""))
+                profile_complete = True
             else:
                 nome = auth_response.user.user_metadata.get("name", "")
+                profile_complete = False
         except Exception as e:
             print(f"Aviso: Erro ao buscar dados do Utilizador: {str(e)}")
             nome = auth_response.user.user_metadata.get("name", "")
+            profile_complete = False
         
         user_response = UserResponse(
             id=auth_response.user.id,
@@ -198,13 +202,12 @@ async def login(credentials: LoginRequest):
         
         return LoginResponse(
             user=user_response,
-            session={
-                "access_token": auth_response.session.access_token,
-                "refresh_token": auth_response.session.refresh_token,
-                "expires_in": auth_response.session.expires_in,
-                "token_type": auth_response.session.token_type
-            },
-            message="Login realizado com sucesso"
+            access_token=auth_response.session.access_token,
+            refresh_token=auth_response.session.refresh_token,
+            expires_in=auth_response.session.expires_in,
+            token_type="bearer",
+            message="Login realizado com sucesso",
+            profile_complete=profile_complete
         )
         
     except AuthApiError as e:

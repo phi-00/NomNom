@@ -124,9 +124,9 @@ const handleRegister = async () => {
     success.value = 'Conta criada com sucesso! Complete seu perfil...';
     
     // Salvar token se retornado
-    if (response.data.session?.access_token) {
-      localStorage.setItem('access_token', response.data.session.access_token);
-      localStorage.setItem('refresh_token', response.data.session.refresh_token);
+    if (response.data.access_token) {
+      localStorage.setItem('access_token', response.data.access_token);
+      localStorage.setItem('refresh_token', response.data.refresh_token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
     }
 
