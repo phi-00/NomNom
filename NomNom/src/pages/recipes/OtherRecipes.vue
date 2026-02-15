@@ -110,7 +110,14 @@
       </div>
     </div>
 
-    <div v-if="loading" class="loading">Loading recipes...</div>
+    <div v-if="loading" class="loading-skeleton">
+      <div class="skeleton-card" v-for="i in 6" :key="i">
+        <div class="skeleton-image"></div>
+        <div class="skeleton-title"></div>
+        <div class="skeleton-text"></div>
+        <div class="skeleton-meta"></div>
+      </div>
+    </div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="otherRecipes.length === 0" class="no-recipes">No recipes found</div>
     <div v-else class="recipes-grid">
@@ -251,6 +258,73 @@ const goToRecipe = (recipeId) => {
 .filter-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Skeleton Loading */
+.loading-skeleton {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.skeleton-card {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1rem;
+  background: var(--bg-card);
+}
+
+.skeleton-image,
+.skeleton-title,
+.skeleton-text,
+.skeleton-meta {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .skeleton-image,
+  .skeleton-title,
+  .skeleton-text,
+  .skeleton-meta {
+    background: linear-gradient(90deg, #2a2a2a 25%, #333333 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-image {
+  width: 100%;
+  height: 200px;
+  margin-bottom: 1rem;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 70%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-text {
+  height: 16px;
+  width: 90%;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-meta {
+  height: 20px;
+  width: 50%;
+  margin-top: 0.5rem;
 }
 
 /* Filter Overlay */
