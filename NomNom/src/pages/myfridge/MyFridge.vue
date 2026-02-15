@@ -312,10 +312,11 @@
       // If creating a new ingredient
       if (!selectedIngredient.value && newIngredient.value.nome) {
         console.log('Creating new ingredient:', newIngredient.value);
+        
         // Ensure calorias is a number
         const ingredientData = {
           ...newIngredient.value,
-          calorias: Number(newIngredient.value.calorias) || 0
+          calorias : Number(newIngredient.value.calorias) || 0
         };
         const created = await createIngredient(ingredientData);
         console.log('Created ingredient response:', created);
@@ -468,7 +469,7 @@ h1 {
   padding: 0.75rem 3rem;
   margin: 0.5rem 0;
   background: var(--bg-secondary);
-  border-radius: 6px;
+  border-radius: 8px;
   transition: all 0.2s;
 }
 
