@@ -447,9 +447,9 @@ h1 {
 
 .ingredient-item {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 3rem;
   margin: 0.5rem 0;
   background: var(--bg-secondary);
   border-radius: 8px;
