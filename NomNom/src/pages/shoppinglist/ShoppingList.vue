@@ -42,8 +42,76 @@
 
         <div v-if="searchPerformed && similarResults.length === 0" class="no-results">
           Nenhum ingrediente semelhante encontrado.
+          <Button 
+            @click="showCreateDialog = true" 
+            label="Criar novo" 
+            icon="pi pi-plus"
+            size="small"
+            severity="success"
+            class="create-btn"
+          />
         </div>
       </div>
+
+      <!-- Dialog para criar novo ingrediente -->
+      <Dialog 
+        v-model:visible="showCreateDialog" 
+        modal 
+        header="Criar novo ingrediente"
+        :style="{ width: '500px' }"
+      >
+        <div class="create-form-dialog">
+          <div class="form-group">
+            <label>Nome do ingrediente: *</label>
+            <InputText 
+              v-model="newIngredientForm.nome"
+              placeholder="Ex: Banana"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Grupo alimentar: *</label>
+            <Dropdown 
+              v-model="newIngredientForm.grupo_alimentar"
+              :options="foodGroups"
+              placeholder="Selecione um grupo"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Unidade de medida:</label>
+            <InputText 
+              v-model="newIngredientForm.unidade_medida"
+              placeholder="Ex: g, ml, un"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Calorias (por 100g):</label>
+            <InputNumber 
+              v-model="newIngredientForm.calorias"
+              :min="0"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <template #footer>
+          <Button 
+            label="Cancelar" 
+            @click="showCreateDialog = false" 
+            severity="secondary" 
+          />
+          <Button 
+            label="Criar e adicionar" 
+            @click="createAndAddIngredient" 
+            severity="success"
+          />
+        </template>
+      </Dialog>
 
       <!-- Shopping List Items -->
       <div class="items-container">
@@ -92,15 +160,20 @@ import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
 import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import Dropdown from 'primevue/dropdown';
 import { useIngredients } from '../../composables/useIngredients';
 import { useShoppingList } from '../../composables/useShoppingList';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 
 // Composables
-const { searchSimilarIngredients, addToInventory } = useIngredients();
+const { searchSimilarIngredients, addToInventory, createIngredient } = useIngredients();
 const { fetchShoppingList, addToShoppingList, removeFromShoppingList, shoppingListItems } = useShoppingList();
 const toast = useToast();
+
+// Food groups
+const foodGroups = ['fruta', 'ovos', 'laticíneos', 'pescado', 'especiarias', 'cereais e derivados, tuberculos', 'hortícolas', 'carnes', 'leguminosas'];
 
 // Reactive data
 const searchText = ref('');
@@ -109,6 +182,13 @@ const similarResults = ref([]);
 const shoppingItems = ref([]);
 const user = ref(null);
 const searchPerformed = ref(false);
+const showCreateDialog = ref(false);
+const newIngredientForm = ref({
+  nome: '',
+  grupo_alimentar: '',
+  unidade_medida: 'g',
+  calorias: 0
+});
 
 // Carrega usuário e lista de compras ao montar
 onMounted(async () => {
@@ -202,6 +282,67 @@ const addToList = async (ingredient) => {
       severity: 'error',
       summary: 'Erro',
       detail: 'Erro ao adicionar ingrediente',
+      life: 3000
+    });
+  }
+};
+
+// Criar novo ingrediente e adicionar à lista
+const createAndAddIngredient = async () => {
+  try {
+    // Validar campos obrigatórios
+    if (!newIngredientForm.value.nome || !newIngredientForm.value.grupo_alimentar) {
+      toast.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Por favor, preencha nome e grupo alimentar',
+        life: 3000
+      });
+      return;
+    }
+
+    // Criar ingrediente
+    const created = await createIngredient(newIngredientForm.value);
+
+    const quantidade = quantidadeSelected.value || 1;
+
+    // Adicionar à lista de compras no banco
+    await addToShoppingList(user.value.email, created.id, quantidade);
+
+    // Adicionar localmente
+    shoppingItems.value.push({
+      id: created.id,
+      text: created.nome,
+      completed: false,
+      quantidade: quantidade,
+      ingredienteId: created.id
+    });
+
+    // Limpar e resetar
+    searchText.value = '';
+    quantidadeSelected.value = 1;
+    similarResults.value = [];
+    searchPerformed.value = false;
+    showCreateDialog.value = false;
+    newIngredientForm.value = {
+      nome: '',
+      grupo_alimentar: '',
+      unidade_medida: 'g',
+      calorias: 0
+    };
+
+    toast.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `"${created.nome}" criado e adicionado à lista (${quantidade} un)`,
+      life: 3000
+    });
+  } catch (err) {
+    console.error('Erro ao criar ingrediente:', err);
+    toast.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Erro ao criar ingrediente',
       life: 3000
     });
   }
