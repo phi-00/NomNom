@@ -470,7 +470,7 @@ h1 {
 
 .ingredient-item {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
   padding: 0.75rem 3rem;
   margin: 0.5rem 0;
