@@ -1,8 +1,8 @@
 <template>
   <div class="recipe-detail-container">
-    <router-link to="/recipes" class="back-link">← Voltar</router-link>
+    <router-link to="/recipes" class="back-link">← Go back</router-link>
     
-    <div v-if="loading" class="loading">Carregando receita...</div>
+    <div v-if="loading" class="loading">Loading recipe...</div>
     
     <div v-else-if="error" class="error-message">
       ⚠️ {{ error }}
