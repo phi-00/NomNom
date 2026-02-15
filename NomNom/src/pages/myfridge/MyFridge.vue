@@ -16,7 +16,7 @@
             <TabPanels>
                 <TabPanel v-for="tab in tabs" :key="tab.title" :value="tab.value">
                   <div v-if="getIngredientsByGroup(tab.grupo_alimentar).length === 0" class="empty-message">
-                    Nenhum ingrediente nesta categoria
+                    No ingredient in this category
                   </div>
                   <div v-else>
                     <div  class="ingredient-item header-item">
@@ -357,7 +357,7 @@
 }
 
 h1 {
-  color: var(--accent-color);
+  color: #1ab394;
   margin: 0;
 }
 
@@ -430,19 +430,19 @@ h1 {
   font-style: italic;
 }
 
-/* Dialog Styles */
 .dialog-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
 }
 
 @keyframes fadeIn {
@@ -455,16 +455,20 @@ h1 {
 }
 
 .dialog-content {
-  background-color: var(--bg-primary);
-  border-radius: 12px;
+  background-color: #ffffff;
+  border-radius: 16px;
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  overflow-x: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
   animation: slideUp 0.3s ease;
   position: relative;
   z-index: 1001;
+  border: 2px solid rgba(26, 179, 148, 0.4);
+  display: flex;
+  flex-direction: column;
 }
 
 @keyframes slideUp {
@@ -483,19 +487,20 @@ h1 {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 2px solid rgba(26, 179, 148, 0.3);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
+  color: white;
 }
 
 .dialog-header h2 {
   margin: 0;
-  color: var(--accent-color);
   font-size: 1.5rem;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: white;
   font-size: 2rem;
   cursor: pointer;
   padding: 0;
@@ -509,8 +514,8 @@ h1 {
 }
 
 .close-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
 }
 
 .dialog-body {
@@ -522,9 +527,10 @@ h1 {
 }
 
 .form-section h3 {
-  color: var(--text-primary);
+  color: #213547;
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .form-group {
@@ -534,7 +540,7 @@ h1 {
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--text-secondary);
+  color: #666;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -544,10 +550,10 @@ h1 {
 .form-group select {
   width: 100%;
   padding: 0.75rem;
-  background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
-  color: var(--text-primary);
+  color: #213547;
   font-size: 1rem;
   transition: all 0.3s;
 }
@@ -568,8 +574,8 @@ h1 {
 
 .search-results {
   margin-top: 0.5rem;
-  background: var(--bg-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
   border-radius: 8px;
   max-height: 200px;
   overflow-y: auto;
@@ -582,7 +588,7 @@ h1 {
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .search-result-item:last-child {
@@ -590,11 +596,11 @@ h1 {
 }
 
 .search-result-item:hover {
-  background: rgba(26, 179, 148, 0.1);
+  background: #f0f0f0;
 }
 
 .search-result-item.selected {
-  background: rgba(26, 179, 148, 0.2);
+  background: rgba(26, 179, 148, 0.15);
   border-left: 3px solid var(--accent-color);
 }
 
@@ -629,19 +635,20 @@ h1 {
 }
 
 .clear-button {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  background: #e0e0e0;
+  color: #666;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
+  font-weight: 600;
 }
 
 .clear-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-primary);
+  background: #d0d0d0;
+  color: #213547;
 }
 
 .separator {
@@ -657,14 +664,14 @@ h1 {
   right: 0;
   top: 50%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.1);
+  background: #e0e0e0;
 }
 
 .separator span {
-  background: var(--bg-card, #ffffff);
+  background: #ffffff;
   padding: 0 1rem;
   position: relative;
-  color: var(--text-secondary);
+  color: #666;
   font-weight: 600;
 }
 
@@ -672,8 +679,9 @@ h1 {
   display: flex;
   gap: 1rem;
   padding: 1.5rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid #e0e0e0;
   justify-content: flex-end;
+  background: #f8f9fa;
 }
 
 .cancel-button,
@@ -688,13 +696,13 @@ h1 {
 }
 
 .cancel-button {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  background: #e0e0e0;
+  color: #666;
 }
 
 .cancel-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: var(--text-primary);
+  background: #d0d0d0;
+  color: #213547;
 }
 
 .confirm-button {
