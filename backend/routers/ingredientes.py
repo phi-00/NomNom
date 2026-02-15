@@ -216,7 +216,7 @@ async def debug_valid_food_groups():
         }
 
 
-
+@router.get("")
 async def get_ingredientes():
     """
     Retorna todos os ingredientes com suas informações completas
