@@ -28,17 +28,17 @@
         <div class="feature-card">
           <div class="feature-icon">🥘</div>
           <h3>Diverse Recipes</h3>
-          <p>Access thousands of delicious recipes for all tastes</p>
+          <p>Access delicious recipes for all tastes</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">🧊</div>
           <h3>Manage Your Fridge</h3>
-          <p>Control the ingredients you have and get personalized suggestions</p>
+          <p>Control the ingredients you have</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">📋</div>
           <h3>Shopping List</h3>
-          <p>Create automatic shopping lists based on the recipes you choose</p>
+          <p>Have full control of your Shopping List and send ingredients directly into your fridge</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">❤️</div>
