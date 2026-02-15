@@ -38,6 +38,7 @@ watch(
   background-color: var(--bg-primary);
   min-height: 100vh;
   width: 100%;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .slide-right-enter-active, .slide-right-leave-active {
@@ -70,5 +71,20 @@ watch(
 }
 .slide-left-leave-to {
   transform: translateX(100%);
+}
+</style>
+
+<style>
+/* Global font for PrimeVue components */
+.p-toast,
+.p-toast .p-toast-message,
+.p-toast-summary,
+.p-toast-detail,
+.p-dialog,
+.p-button,
+.p-inputtext,
+.p-dropdown,
+.p-component {
+  font-family: 'Nunito Sans', sans-serif !important;
 }
 </style>

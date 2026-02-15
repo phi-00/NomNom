@@ -62,3 +62,94 @@ body {
   padding: 2rem;
 }
 
+/* Global Toast Customization */
+.p-toast {
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-toast .p-toast-message {
+  background-color: #ffffff !important;
+  border: 2px solid rgba(26, 179, 148, 0.3) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 15px rgba(26, 179, 148, 0.2) !important;
+  margin-bottom: 1rem;
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-success {
+  border-color: rgba(26, 179, 148, 0.5) !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-error {
+  border-color: rgba(244, 67, 54, 0.5) !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-info {
+  border-color: rgba(33, 150, 243, 0.5) !important;
+}
+
+.p-toast .p-toast-message.p-toast-message-warn {
+  border-color: rgba(255, 193, 7, 0.5) !important;
+}
+
+.p-toast-message-content {
+  padding: 1rem !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-toast-message-text {
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-toast-summary {
+  font-weight: 700 !important;
+  font-family: 'Nunito Sans', sans-serif !important;
+  color: var(--text-primary) !important;
+  font-size: 1.1rem !important;
+}
+
+.p-toast-detail {
+  font-family: 'Nunito Sans', sans-serif !important;
+  color: var(--text-secondary) !important;
+  margin-top: 0.5rem !important;
+  font-size: 0.95rem !important;
+  font-weight: 400 !important;
+}
+
+.p-toast-message.p-toast-message-success .p-toast-summary {
+  color: #1ab394 !important;
+}
+
+.p-toast-message.p-toast-message-error .p-toast-summary {
+  color: #f44336 !important;
+}
+
+.p-toast-message.p-toast-message-info .p-toast-summary {
+  color: #2196f3 !important;
+}
+
+.p-toast-message.p-toast-message-warn .p-toast-summary {
+  color: #ffc107 !important;
+}
+
+.p-toast-icon-close {
+  color: var(--text-secondary) !important;
+}
+
+.p-toast-icon-close:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Additional specificity for PrimeVue toast text */
+.p-component {
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-content .p-toast-summary {
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
+.p-toast .p-toast-message .p-toast-message-content .p-toast-detail {
+  font-family: 'Nunito Sans', sans-serif !important;
+}
+
