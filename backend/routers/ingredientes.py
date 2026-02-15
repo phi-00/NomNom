@@ -307,3 +307,93 @@ async def add_to_inventory(inventory_item: Dict[str, Any]):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao adicionar item ao inventário: {str(e)}"
         )
+
+
+@router.patch("/inventario")
+async def update_inventory_quantity(inventory_update: Dict[str, Any]):
+    """
+    Atualiza a quantidade de um ingrediente no inventário do utilizador
+    
+    Params:
+        - idUtilizador: email do utilizador
+        - idIngrediente: ID do ingrediente
+        - quantidade: nova quantidade (substitui a quantidade existente)
+    """
+    try:
+        supabase = get_supabase_client()
+        
+        id_utilizador = inventory_update.get("idUtilizador")
+        id_ingrediente = inventory_update.get("idIngrediente")
+        quantidade = inventory_update.get("quantidade")
+        
+        if not id_utilizador or not id_ingrediente or quantidade is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="idUtilizador, idIngrediente e quantidade são obrigatórios"
+            )
+        
+        # Update the quantity
+        response = supabase.table("Inventário").update({
+            "quantidade": quantidade
+        }).eq("idUtilizador", id_utilizador).eq(
+            "idIngrediente", id_ingrediente
+        ).execute()
+        
+        if not response.data:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Item não encontrado no inventário"
+            )
+        
+        return {
+            "message": "Quantidade atualizada com sucesso",
+            "data": response.data[0] if response.data else None
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao atualizar quantidade: {str(e)}"
+        )
+
+
+@router.delete("/inventario")
+async def remove_from_inventory(inventory_item: Dict[str, Any]):
+    """
+    Remove um ingrediente do inventário do utilizador
+    
+    Params:
+        - idUtilizador: email do utilizador
+        - idIngrediente: ID do ingrediente
+    """
+    try:
+        supabase = get_supabase_client()
+        
+        id_utilizador = inventory_item.get("idUtilizador")
+        id_ingrediente = inventory_item.get("idIngrediente")
+        
+        if not id_utilizador or not id_ingrediente:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="idUtilizador e idIngrediente são obrigatórios"
+            )
+        
+        # Delete the item from inventory
+        response = supabase.table("Inventário").delete().eq(
+            "idUtilizador", id_utilizador
+        ).eq("idIngrediente", id_ingrediente).execute()
+        
+        return {
+            "message": "Item removido do inventário com sucesso",
+            "data": response.data if hasattr(response, 'data') else None
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao remover item do inventário: {str(e)}"
+        )

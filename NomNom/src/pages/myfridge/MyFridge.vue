@@ -24,7 +24,27 @@
                       <span class="ingredient-quantity">Ingredient</span>
                     </div>
                     <div v-for="item in getIngredientsByGroup(tab.grupo_alimentar)" :key="item.idIngrediente" class="ingredient-item">
-                      <span class="ingredient-quantity">{{ item.quantidade }}</span>
+                      <div class="quantity-controls">
+                        <Button 
+                          icon="pi pi-minus" 
+                          aria-label="Decrease quantity"
+                          rounded
+                          size="small"
+                          class="quantity-btn"
+                          @click="decreaseQuantity(item)"
+                          :disabled="loading"
+                        />
+                        <span class="ingredient-quantity">{{ item.quantidade }}</span>
+                        <Button 
+                          icon="pi pi-plus" 
+                          aria-label="Increase quantity"
+                          rounded
+                          size="small"
+                          class="quantity-btn"
+                          @click="increaseQuantity(item)"
+                          :disabled="loading"
+                        />
+                      </div>
                       <span class="ingredient-name">{{ item.nome }}</span>
                     </div>
                   </div>
@@ -166,6 +186,7 @@
   import TabPanel from 'primevue/tabpanel';
   import { ref, onMounted, computed } from 'vue';
   import { useIngredients } from '../../composables/useIngredients';
+  import Button from 'primevue/button';
 
   const { 
     ingredientes, 
@@ -174,7 +195,9 @@
     fetchUserInventory,
     searchSimilarIngredients,
     createIngredient,
-    addToInventory
+    addToInventory,
+    updateInventoryQuantity,
+    removeFromInventory
   } = useIngredients();
   
   const user = ref(null);
@@ -337,6 +360,37 @@
     };
   };
 
+  // Increase ingredient quantity
+  const increaseQuantity = async (item) => {
+    if (!user.value) return;
+    
+    try {
+      const newQuantity = item.quantidade + 1;
+      await updateInventoryQuantity(user.value.email, item.idIngrediente, newQuantity);
+      await fetchUserInventory(user.value.email);
+    } catch (err) {
+      console.error('Erro ao aumentar quantidade:', err);
+    }
+  };
+
+  // Decrease ingredient quantity or remove if reaches 0
+  const decreaseQuantity = async (item) => {
+    if (!user.value) return;
+    
+    try {
+      if (item.quantidade > 1) {
+        const newQuantity = item.quantidade - 1;
+        await updateInventoryQuantity(user.value.email, item.idIngrediente, newQuantity);
+      } else {
+        // Remove ingredient if quantity reaches 0
+        await removeFromInventory(user.value.email, item.idIngrediente);
+      }
+      await fetchUserInventory(user.value.email);
+    } catch (err) {
+      console.error('Erro ao diminuir quantidade:', err);
+    }
+  };
+
 </script>
 
 
@@ -413,14 +467,47 @@ h1 {
   transform: translateX(4px);
 }
 
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.quantity-controls :deep(.quantity-btn) {
+  color: var(--accent-color) !important;
+  width: 2rem;
+  height: 2rem;
+}
+
+.quantity-controls :deep(.quantity-btn .p-button-icon) {
+  color: var(--accent-color) !important;
+  font-size: 1rem;
+}
+
+.quantity-controls :deep(.quantity-btn:hover) {
+  background: rgba(26, 179, 148, 0.2) !important;
+}
+
+.quantity-controls :deep(.quantity-btn:hover .p-button-icon) {
+  color: var(--text-primary) !important;
+}
+
+.quantity-controls :deep(.quantity-btn:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .ingredient-name {
   font-weight: 600;
   color: var(--text-primary);
+  flex: 1;
 }
 
 .ingredient-quantity {
   color: var(--accent-color);
   font-weight: 700;
+  min-width: 40px;
+  text-align: center;
 }
 
 .empty-message {
@@ -738,6 +825,20 @@ h1 {
   .add-button {
     width: 100%;
     justify-content: center;
+  }
+
+  .ingredient-item {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .quantity-controls {
+    order: 1;
+  }
+
+  .ingredient-name {
+    order: 2;
+    width: 100%;
   }
 
   .dialog-content {

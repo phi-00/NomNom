@@ -12,6 +12,7 @@
     "@primeuix/themes": "^2.0.3",
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.6.2",
+    "primeicons": "^7.0.0",
     "primevue": "^4.5.4",
     "tailwind": "^4.0.0",
     "tailwindcss": "^4.1.18",
