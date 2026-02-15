@@ -23,7 +23,7 @@
 
     <!-- Features Section -->
     <div class="features-section">
-      <h2>Why use <img src="/name_white.png" alt="NomNom" class="brand-name"/>?</h2>
+      <h2>Why use <img src="/name_white_bg.png" alt="NomNom" class="brand-name"/>?</h2>
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon">🥘</div>
@@ -72,7 +72,7 @@ const isLoggedIn = computed(() => {
 @import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;600;700&display=swap');
 
 .home {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Nunito Sans';
   color: var(--text-primary);
   background: var(--navbar-bg);
   min-height: 100vh;
@@ -95,7 +95,7 @@ const isLoggedIn = computed(() => {
   font-size: 3.5rem;
   font-weight: 700;
   margin: 0 0 1rem 0;
-  color: #ffffff;
+  color: var(--text-primary);
   line-height: 1.2;
   display: flex;
   align-items: center;
@@ -111,7 +111,7 @@ const isLoggedIn = computed(() => {
 
 .subtitle {
   font-size: 1.3rem;
-  color: #b0b0b0;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
 }
@@ -151,13 +151,13 @@ const isLoggedIn = computed(() => {
 }
 
 .btn-secondary {
-  background: #252525;
-  color: #ffffff;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   border: 2px solid rgba(26, 179, 148, 0.4);
 }
 
 .btn-secondary:hover {
-  background: #1a1a1a;
+  background: var(--card-hover);
   border-color: #1ab394;
 }
 
@@ -177,8 +177,8 @@ const isLoggedIn = computed(() => {
 }
 
 .logo {
-  width: 100%;
-  height: 100%;
+  width: 150%;
+  height: 150%;
   object-fit: contain;
   animation: float 3s ease-in-out infinite;
 }
@@ -199,7 +199,7 @@ const isLoggedIn = computed(() => {
 .features-section h2 {
   text-align: center;
   font-size: 2.5rem;
-  color: #1ab394;
+  color: var(--text-primary);
   margin-bottom: 3rem;
   font-weight: 700;
   display: flex;
@@ -247,8 +247,8 @@ const isLoggedIn = computed(() => {
 }
 
 .feature-card {
-  background: #1a1a1a;
-  border: 2px solid rgba(26, 179, 148, 0.2);
+  background: var(--bg-card);
+  border: 2px solid rgba(26, 179, 148, 0.3);
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
@@ -268,13 +268,13 @@ const isLoggedIn = computed(() => {
 }
 
 .feature-card h3 {
-  color: #ffffff;
+  color: var(--text-primary);
   font-size: 1.3rem;
   margin: 1rem 0 0.5rem 0;
 }
 
 .feature-card p {
-  color: #b0b0b0;
+  color: var(--text-secondary);
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0;
@@ -330,7 +330,7 @@ const isLoggedIn = computed(() => {
 
 .get-started-section p {
   font-size: 1.2rem;
-  color: #b0b0b0;
+  color: var(--text-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
 }

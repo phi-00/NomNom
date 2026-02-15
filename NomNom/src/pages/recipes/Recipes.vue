@@ -143,7 +143,7 @@ const goToRecipe = (recipeId) => {
 }
 
 .see-all {
-  color: #d0d0d0;
+  color: #454545;
   text-decoration: none;
   font-weight: 500;
   cursor: pointer;
@@ -151,7 +151,7 @@ const goToRecipe = (recipeId) => {
 }
 
 .see-all:hover {
-  color: #ffffff;
+  color: #454545;
   text-decoration: underline;
 }
 
