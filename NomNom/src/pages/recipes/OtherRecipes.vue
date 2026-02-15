@@ -1,6 +1,114 @@
 <template>
   <section class="other-recipes">
-    <h1>Other Recipes</h1>
+    <div class="header-section">
+      <h1>Other Recipes</h1>
+      <button class="filter-button" @click="showFilters = true">
+        🔍 Filtros
+      </button>
+    </div>
+
+    <!-- Filter Overlay -->
+    <div v-if="showFilters" class="filter-overlay" @click.self="showFilters = false">
+      <div class="filter-panel">
+        <div class="filter-header">
+          <h2>Filtros de Pesquisa</h2>
+          <button class="close-button" @click="showFilters = false">✕</button>
+        </div>
+        
+        <div class="filter-content">
+          <!-- Only Ingredients You Have -->
+          <div class="filter-group">
+            <label class="checkbox-label">
+              <input type="checkbox" v-model="filters.onlyMyIngredients" />
+              <span>Apenas ingredientes que você tem</span>
+            </label>
+          </div>
+
+          <!-- Difficulty -->
+          <div class="filter-group">
+            <label class="filter-label">Nível de Dificuldade</label>
+            <select v-model="filters.dificuldade">
+              <option value="">Todos</option>
+              <option value="Fácil">Fácil</option>
+              <option value="Médio">Médio</option>
+              <option value="Difícil">Difícil</option>
+            </select>
+          </div>
+
+          <!-- Category -->
+          <div class="filter-group">
+            <label class="filter-label">Categoria</label>
+            <select v-model="filters.categoria">
+              <option value="">Todas</option>
+              <option value="Pequeno-almoço">Pequeno-almoço</option>
+              <option value="Almoço">Almoço</option>
+              <option value="Jantar">Jantar</option>
+              <option value="Lanche">Lanche</option>
+              <option value="Sobremesa">Sobremesa</option>
+            </select>
+          </div>
+
+          <!-- Cooking Type -->
+          <div class="filter-group">
+            <label class="filter-label">Tipo de Cozinhado</label>
+            <select v-model="filters.tipo_cozinhado">
+              <option value="">Todos</option>
+              <option value="Assado">Assado</option>
+              <option value="Grelhado">Grelhado</option>
+              <option value="Frito">Frito</option>
+              <option value="Cozido">Cozido</option>
+              <option value="Cru">Cru</option>
+            </select>
+          </div>
+
+          <!-- Preparation Time -->
+          <div class="filter-group">
+            <label class="filter-label">Tempo de Preparação (minutos)</label>
+            <div class="range-inputs">
+              <input 
+                type="number" 
+                v-model.number="filters.tempo_min" 
+                placeholder="Min"
+                min="0"
+              />
+              <span>até</span>
+              <input 
+                type="number" 
+                v-model.number="filters.tempo_max" 
+                placeholder="Max"
+                min="0"
+              />
+            </div>
+          </div>
+
+          <!-- Servings -->
+          <div class="filter-group">
+            <label class="filter-label">Número de Porções</label>
+            <div class="range-inputs">
+              <input 
+                type="number" 
+                v-model.number="filters.porcoes_min" 
+                placeholder="Min"
+                min="1"
+              />
+              <span>até</span>
+              <input 
+                type="number" 
+                v-model.number="filters.porcoes_max" 
+                placeholder="Max"
+                min="1"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-actions">
+          <button class="clear-button" @click="clearFilters">Limpar Filtros</button>
+          <button class="apply-button" @click="applyFilters">Aplicar Filtros</button>
+        </div>
+      </div>
+    </div>
+
     <div v-if="loading" class="loading">Loading recipes...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="otherRecipes.length === 0" class="no-recipes">No recipes found</div>
@@ -25,21 +133,86 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useRecipes } from '../../composables/useRecipes';
 
 const router = useRouter();
-const { outrasReceitas, loading, error, fetchOutrasReceitas } = useRecipes();
+const { outrasReceitas, loading, error, fetchOutrasReceitasWithFilters } = useRecipes();
+
+const showFilters = ref(false);
+const filters = ref({
+  onlyMyIngredients: false,
+  dificuldade: '',
+  categoria: '',
+  tipo_cozinhado: '',
+  tempo_min: null,
+  tempo_max: null,
+  porcoes_min: null,
+  porcoes_max: null
+});
 
 const otherRecipes = computed(() => {
   return outrasReceitas.value || [];
 });
 
 onMounted(async () => {
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-  await fetchOutrasReceitas(user.email || null);
+  await loadRecipes();
 });
+
+const loadRecipes = async () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  await fetchOutrasReceitasWithFilters(user.email || null, {});
+};
+
+const applyFilters = async () => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  
+  // Build filter object, only including non-empty values
+  const activeFilters = {};
+  
+  if (filters.value.onlyMyIngredients) {
+    activeFilters.onlyMyIngredients = true;
+  }
+  if (filters.value.dificuldade) {
+    activeFilters.dificuldade = filters.value.dificuldade;
+  }
+  if (filters.value.categoria) {
+    activeFilters.categoria = filters.value.categoria;
+  }
+  if (filters.value.tipo_cozinhado) {
+    activeFilters.tipo_cozinhado = filters.value.tipo_cozinhado;
+  }
+  if (filters.value.tempo_min !== null && filters.value.tempo_min !== '') {
+    activeFilters.tempo_min = filters.value.tempo_min;
+  }
+  if (filters.value.tempo_max !== null && filters.value.tempo_max !== '') {
+    activeFilters.tempo_max = filters.value.tempo_max;
+  }
+  if (filters.value.porcoes_min !== null && filters.value.porcoes_min !== '') {
+    activeFilters.porcoes_min = filters.value.porcoes_min;
+  }
+  if (filters.value.porcoes_max !== null && filters.value.porcoes_max !== '') {
+    activeFilters.porcoes_max = filters.value.porcoes_max;
+  }
+  
+  await fetchOutrasReceitasWithFilters(user.email || null, activeFilters);
+  showFilters.value = false;
+};
+
+const clearFilters = () => {
+  filters.value = {
+    onlyMyIngredients: false,
+    dificuldade: '',
+    categoria: '',
+    tipo_cozinhado: '',
+    tempo_min: null,
+    tempo_max: null,
+    porcoes_min: null,
+    porcoes_max: null
+  };
+  loadRecipes();
+};
 
 const goToRecipe = (recipeId) => {
   router.push(`/recipes/${recipeId}`);
@@ -53,6 +226,201 @@ const goToRecipe = (recipeId) => {
   margin: 0 auto;
   font-family: 'Nunito Sans';
   color: var(--text-primary);
+}
+
+.header-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.filter-button {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #4a90e2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.filter-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Filter Overlay */
+.filter-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.filter-panel {
+  background: var(--bg-card);
+  border-radius: 16px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-color);
+}
+
+.filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background: linear-gradient(135deg, var(--accent-color) 0%, #4a90e2 100%);
+  color: white;
+}
+
+.filter-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.close-button {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.close-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  flex: 1;
+  background: var(--bg-card);
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.filter-group select,
+.filter-group input[type="number"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+  font-family: 'Nunito Sans';
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.filter-group select:focus,
+.filter-group input[type="number"]:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.range-inputs {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.range-inputs input {
+  flex: 1;
+}
+
+.range-inputs span {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+}
+
+.clear-button,
+.apply-button {
+  flex: 1;
+  padding: 0.875rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.clear-button {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.clear-button:hover {
+  background: var(--bg-secondary);
+  border-color: var(--accent-color);
+}
+
+.apply-button {
+  background: linear-gradient(135deg, var(--accent-color) 0%, #4a90e2 100%);
+  color: white;
+}
+
+.apply-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .loading, .error, .no-recipes {
@@ -72,7 +440,7 @@ const goToRecipe = (recipeId) => {
 h1 {
   color: var(--accent-color);
   font-size: 2.5rem;
-  margin-bottom: 2rem;
+  margin: 0;
 }
 
 .recipes-grid {

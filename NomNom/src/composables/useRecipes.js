@@ -54,6 +54,56 @@ export function useRecipes() {
     }
   };
 
+  const fetchOutrasReceitasWithFilters = async (userEmail = null, filters = {}) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const params = {};
+      
+      // Add user email
+      if (userEmail) {
+        params.user_email = userEmail;
+      }
+      
+      // Add filters
+      if (filters.dificuldade) {
+        params.dificuldade = filters.dificuldade;
+      }
+      if (filters.categoria) {
+        params.categoria = filters.categoria;
+      }
+      if (filters.tipo_cozinhado) {
+        params.tipo_cozinhado = filters.tipo_cozinhado;
+      }
+      if (filters.tempo_min !== undefined && filters.tempo_min !== null) {
+        params.tempo_min = filters.tempo_min;
+      }
+      if (filters.tempo_max !== undefined && filters.tempo_max !== null) {
+        params.tempo_max = filters.tempo_max;
+      }
+      if (filters.porcoes_min !== undefined && filters.porcoes_min !== null) {
+        params.porcoes_min = filters.porcoes_min;
+      }
+      if (filters.porcoes_max !== undefined && filters.porcoes_max !== null) {
+        params.porcoes_max = filters.porcoes_max;
+      }
+      if (filters.onlyMyIngredients) {
+        params.only_my_ingredients = true;
+      }
+
+      const response = await apiClient.get('/api/v1/receitas/outras/filtradas', {
+        params: params
+      });
+      outrasReceitas.value = response.data || [];
+    } catch (err) {
+      error.value = err.response?.data?.detail || 'Erro ao buscar receitas filtradas';
+      console.error('Erro ao buscar receitas filtradas:', err);
+      outrasReceitas.value = [];
+    } finally {
+      loading.value = false;
+    }
+  };
+
   const fetchTodasReceitas = async () => {
     loading.value = true;
     error.value = null;
@@ -93,6 +143,7 @@ export function useRecipes() {
     error,
     fetchMinhasReceitas,
     fetchOutrasReceitas,
+    fetchOutrasReceitasWithFilters,
     fetchTodasReceitas,
     fetchAllRecipes
   };
