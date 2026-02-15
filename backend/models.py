@@ -37,8 +37,12 @@ class LoginRequest(BaseModel):
 class LoginResponse(BaseModel):
     """Modelo de resposta do login"""
     user: UserResponse
-    session: dict  # Contém access_token, refresh_token, etc
+    access_token: str
+    refresh_token: str
+    expires_in: int
+    token_type: str = "bearer"
     message: str
+    profile_complete: bool = False
 
 
 # ========== MODELOS DE EXEMPLO (ITEMS) ==========

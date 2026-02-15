@@ -93,7 +93,7 @@ const loadUserData = () => {
 .profile {
   padding: 2rem;
   min-height: 100vh;
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'Nunito Sans';
   background: var(--bg-card);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -110,18 +110,18 @@ h1 {
 }
 
 .subtitle {
-  color: #b0b0b0;
+  color: #454545;
   margin-bottom: 2rem;
   font-size: 1rem;
 }
 
 .profile-card {
-  background: #1a1a1a;
+  background: var(--bg-card);
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
   padding: 2.5rem;
   margin-bottom: 2rem;
-  border: 1px solid rgba(26, 179, 148, 0.2);
+  border: 1px solid #1ab394;
 }
 
 /* Profile Picture Section */
@@ -181,7 +181,7 @@ h1 {
 }
 
 .field-value {
-  color: #e0e0e0;
+  color: var(--text-primary);
   font-size: 1rem;
   padding: 0.875rem 1rem;
   background: rgba(255, 255, 255, 0.05);

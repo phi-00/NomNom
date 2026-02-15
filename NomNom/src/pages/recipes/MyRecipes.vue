@@ -224,12 +224,16 @@ h1 {
 }
 
 .tag {
-  display: inline-block;
-  background-color: var(--bg-secondary);
-  color: var(--accent-color);
-  padding: 4px 10px;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, rgba(26, 179, 148, 0.85) 0%, rgba(21, 151, 109, 0.85) 100%) !important;
+  color: white !important;
+  padding: 6px 12px !important;
+  border-radius: 50px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 8px rgba(26, 179, 148, 0.3) !important;
 }
 </style>
