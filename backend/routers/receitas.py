@@ -434,7 +434,7 @@ async def get_recipe_with_ingredients(recipe_id: int):
                     "nome": ingredient.get("nome") or ingredient.get("name"),
                     "quantidade": quantidade,
                     "calorias": calorias_por_unidade,
-                    "unidade": rec_ing.get("unidade") or "g"  # g, ml, unidade, etc
+                    "unidade": ingredient.get("unidade_medida") or ingredient.get("unidade") or "g"  # Usa a unidade do ingrediente
                 })
         
         # 4. Calcular total de calorias (quantidade * calorias por unidade)
