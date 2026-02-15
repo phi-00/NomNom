@@ -268,7 +268,7 @@ const goToRecipe = (recipeId) => {
 }
 
 .filter-panel {
-  background: var(--bg-card);
+  background: #1a1a1a;
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
@@ -277,7 +277,7 @@ const goToRecipe = (recipeId) => {
   display: flex;
   flex-direction: column;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid var(--border-color);
+  border: 2px solid rgba(26, 179, 148, 0.4);
 }
 
 .filter-header {
@@ -285,8 +285,8 @@ const goToRecipe = (recipeId) => {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
-  background: linear-gradient(135deg, var(--accent-color) 0%, #4a90e2 100%);
+  border-bottom: 2px solid rgba(26, 179, 148, 0.3);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
 }
 
@@ -319,7 +319,7 @@ const goToRecipe = (recipeId) => {
   padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
-  background: var(--bg-card);
+  background: #252525;
 }
 
 .filter-group {
@@ -330,7 +330,7 @@ const goToRecipe = (recipeId) => {
   display: block;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .checkbox-label {
@@ -339,7 +339,7 @@ const goToRecipe = (recipeId) => {
   gap: 0.75rem;
   cursor: pointer;
   font-size: 1rem;
-  color: var(--text-primary);
+  color: #e0e0e0;
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -352,19 +352,19 @@ const goToRecipe = (recipeId) => {
 .filter-group input[type="number"] {
   width: 100%;
   padding: 0.75rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid rgba(26, 179, 148, 0.3);
   border-radius: 8px;
   font-size: 1rem;
   transition: border-color 0.2s;
   font-family: 'Nunito Sans';
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: #1a1a1a;
+  color: #e0e0e0;
 }
 
 .filter-group select:focus,
 .filter-group input[type="number"]:focus {
   outline: none;
-  border-color: var(--accent-color);
+  border-color: #1ab394;
 }
 
 .range-inputs {
@@ -378,7 +378,7 @@ const goToRecipe = (recipeId) => {
 }
 
 .range-inputs span {
-  color: var(--text-secondary);
+  color: #b0b0b0;
   font-weight: 500;
 }
 
@@ -386,8 +386,8 @@ const goToRecipe = (recipeId) => {
   display: flex;
   gap: 1rem;
   padding: 1.5rem;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-secondary);
+  border-top: 2px solid rgba(26, 179, 148, 0.3);
+  background: #1a1a1a;
 }
 
 .clear-button,
@@ -403,18 +403,18 @@ const goToRecipe = (recipeId) => {
 }
 
 .clear-button {
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  border: 2px solid var(--border-color);
+  background: #252525;
+  color: #e0e0e0;
+  border: 2px solid rgba(26, 179, 148, 0.3);
 }
 
 .clear-button:hover {
-  background: var(--bg-secondary);
-  border-color: var(--accent-color);
+  background: #1a1a1a;
+  border-color: #1ab394;
 }
 
 .apply-button {
-  background: linear-gradient(135deg, var(--accent-color) 0%, #4a90e2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
 }
 
