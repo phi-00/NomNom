@@ -14,11 +14,11 @@
     <div class="navbar-auth">
       <template v-if="isAuthenticated">
         <router-link to="/profile" class="user-name">👤 {{ userName }}</router-link>
-        <button @click="handleLogout" class="btn-logout">Sair</button>
+        <button @click="handleLogout" class="btn-logout">Log Out</button>
       </template>
       <template v-else>
-        <router-link to="/login" class="btn-login">Entrar</router-link>
-        <router-link to="/register" class="btn-register">Criar Conta</router-link>
+        <router-link to="/login" class="btn-login">Log In</router-link>
+        <router-link to="/register" class="btn-register">Create Account</router-link>
       </template>
     </div>
   </nav>
@@ -167,13 +167,18 @@ watch(() => route.path, () => {
 
 .btn-login {
   color: var(--accent-color);
-  border: 2px solid var(--accent-color);
+  border: 2px solid #1ab394;
   background: var(--navbar-bg);
+  box-shadow: 0 2px 8px rgba(26, 179, 148, 0.2);
+  transition: all 0.3s ease;
 }
 
 .btn-login:hover {
-  background: var(--accent-color);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
+  border-color: #1ab394;
+  box-shadow: 0 4px 15px rgba(26, 179, 148, 0.3);
+  transform: translateY(-2px);
 }
 
 .btn-register {

@@ -2,8 +2,8 @@
   <div class="auth-container">
     <div class="auth-card">
       <div class="auth-header">
-        <h1>Bem-vindo de Volta!</h1>
-        <p>Entre na sua conta para continuar</p>
+        <h1>Welcome Back!</h1>
+        <p>Log in to your account to continue</p>
       </div>
 
       <form @submit.prevent="handleLogin" class="auth-form">
@@ -13,19 +13,19 @@
             type="email"
             id="email"
             v-model="formData.email"
-            placeholder="seu@email.com"
+            placeholder="your@email.com"
             required
             :disabled="loading"
           />
         </div>
 
         <div class="form-group">
-          <label for="password">Senha</label>
+          <label for="password">Password</label>
           <input
             type="password"
             id="password"
             v-model="formData.password"
-            placeholder="Digite sua senha"
+            placeholder="Enter your password"
             required
             :disabled="loading"
           />
@@ -40,14 +40,14 @@
         </div>
 
         <button type="submit" class="btn-primary" :disabled="loading">
-          <span v-if="loading">Entrando...</span>
-          <span v-else>Entrar</span>
+          <span v-if="loading">Logging in...</span>
+          <span v-else>Log In</span>
         </button>
       </form>
 
       <div class="auth-footer">
-        <p>Não tem uma conta?</p>
-        <router-link to="/register" class="link">Criar Conta</router-link>
+        <p>Don't have an account?</p>
+        <router-link to="/register" class="link">Create Account</router-link>
       </div>
     </div>
   </div>
@@ -74,7 +74,7 @@ const handleLogin = async () => {
   success.value = null;
 
   if (!formData.value.email || !formData.value.password) {
-    error.value = 'Preencha todos os campos';
+    error.value = 'Please fill in all fields';
     return;
   }
 
@@ -86,7 +86,7 @@ const handleLogin = async () => {
       password: formData.value.password
     });
 
-    success.value = 'Login realizado com sucesso! Redirecionando...';
+    success.value = 'Login successful! Redirecting...';
     
     // Salvar token e dados do usuário
     if (response.data.access_token) {
@@ -104,14 +104,14 @@ const handleLogin = async () => {
         // Se perfil não está completo, redirecionar para completar perfil
         router.push('/complete-profile');
       } else {
-        // Se perfil está completo, redirecionar para recipes
-        router.push('/recipes');
+        // Se perfil está completo, redirecionar para home
+        router.push('/home');
       }
     }, 1000);
 
   } catch (err) {
-    console.error('Erro ao fazer login:', err);
-    error.value = err.response?.data?.detail || 'Email ou senha incorretos';
+    console.error('Error logging in:', err);
+    error.value = err.response?.data?.detail || 'Incorrect email or password';
   } finally {
     loading.value = false;
   }
@@ -134,7 +134,8 @@ const handleLogin = async () => {
 .auth-card {
   background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(26, 179, 148, 0.2);
+  box-shadow: 0 10px 30px rgba(26, 179, 148, 0.15);
   padding: 3rem;
   width: 100%;
   max-width: 450px;
@@ -189,10 +190,10 @@ const handleLogin = async () => {
 
 .form-group input {
   padding: 0.875rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid #1ab394;
   border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   background: var(--input-bg);
   color: var(--text-primary);
 }
@@ -203,8 +204,8 @@ const handleLogin = async () => {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1);
+  border-color: #15976d;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.2);
 }
 
 .form-group input:disabled {
@@ -231,7 +232,7 @@ const handleLogin = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #1ab394 0%, #15935f 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
   border: none;
   padding: 1rem;
@@ -239,13 +240,13 @@ const handleLogin = async () => {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   margin-top: 0.5rem;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 20px rgba(26, 179, 148, 0.3);
 }
 
 .btn-primary:disabled {

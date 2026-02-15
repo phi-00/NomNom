@@ -1,5 +1,6 @@
 <template>
   <div class="recipe-detail-container">
+    <Toast />
     <router-link to="/recipes" class="back-link">← Go back</router-link>
     
     <div v-if="loading" class="loading">Loading recipe...</div>
@@ -110,10 +111,13 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useToast } from 'primevue/usetoast';
+import Toast from 'primevue/toast';
 import apiClient from '../../api/client';
 
 const route = useRoute();
 const router = useRouter();
+const toast = useToast();
 
 const recipe = ref(null);
 const loading = ref(true);
@@ -160,10 +164,16 @@ const checkIfFavorite = async () => {
       params: { user_email: userEmail.value }
     });
     
-    const favoriteIds = (response.data || []).map(r => r.id);
-    isFavorite.value = favoriteIds.includes(recipe.value.id);
+    // Verificar se a receita está nos favoritos
+    const favorites = response.data || [];
+    const recipeId = recipe.value.id;
+    
+    isFavorite.value = favorites.some(r => r.id === recipeId);
+    
+    console.log(`Receita ${recipeId} está nos favoritos:`, isFavorite.value);
   } catch (err) {
     console.error('Erro ao verificar favorito:', err);
+    isFavorite.value = false;
   }
 };
 
@@ -178,24 +188,48 @@ const toggleFavorite = async () => {
   toggleLoadingFavorite.value = true;
   
   try {
-    const action = isFavorite.value ? 'remover' : 'adicionar';
+    const newFavoriteState = !isFavorite.value;
     
-    await apiClient.post('/api/v1/receitas/toggle-favorite', {
+    // Fazer a requisição para toggle favorite
+    const response = await apiClient.post('/api/v1/receitas/toggle-favorite', {
       user_email: userEmail.value,
       recipe_id: recipe.value.id,
-      is_favorite: !isFavorite.value
+      is_favorite: newFavoriteState
     });
     
-    isFavorite.value = !isFavorite.value;
+    // Atualizar o estado apenas se a resposta for bem-sucedida
+    isFavorite.value = newFavoriteState;
     
-    const message = isFavorite.value 
-      ? '❤️ Receita adicionada aos favoritos!' 
-      : '💔 Receita removida dos favoritos';
-    
-    console.log(message);
+    if (newFavoriteState) {
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Recipe added to favorites!',
+        life: 3000
+      });
+    } else {
+      toast.add({
+        severity: 'info',
+        summary: 'Removed',
+        detail: 'Recipe removed from favorites',
+        life: 3000
+      });
+    }
   } catch (err) {
-    error.value = err.response?.data?.detail || `Erro ao ${isFavorite.value ? 'remover' : 'adicionar'} favorito`;
+    const action = isFavorite.value ? 'remover de' : 'adicionar aos';
+    const errorMessage = err.response?.data?.detail || `Erro ao ${action} favoritos`;
+    error.value = errorMessage;
+    
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: errorMessage,
+      life: 3000
+    });
+    
     console.error('Erro:', err);
+    // Reverter o estado em caso de erro
+    isFavorite.value = isFavorite.value;
   } finally {
     toggleLoadingFavorite.value = false;
   }

@@ -2,18 +2,18 @@
   <div class="auth-container">
     <div class="auth-card">
       <div class="auth-header">
-        <h1>Criar Conta</h1>
-        <p>Junte-se ao NomNom e explore receitas incríveis!</p>
+        <h1>Create Account</h1>
+        <p>Join NomNom and explore amazing recipes!</p>
       </div>
 
       <form @submit.prevent="handleRegister" class="auth-form">
         <div class="form-group">
-          <label for="name">Nome Completo</label>
+          <label for="name">Full Name</label>
           <input
             type="text"
             id="name"
             v-model="formData.name"
-            placeholder="Digite seu nome"
+            placeholder="Enter your name"
             required
             :disabled="loading"
           />
@@ -25,19 +25,19 @@
             type="email"
             id="email"
             v-model="formData.email"
-            placeholder="seu@email.com"
+            placeholder="your@email.com"
             required
             :disabled="loading"
           />
         </div>
 
         <div class="form-group">
-          <label for="password">Senha</label>
+          <label for="password">Password</label>
           <input
             type="password"
             id="password"
             v-model="formData.password"
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Minimum 6 characters"
             minlength="6"
             required
             :disabled="loading"
@@ -45,12 +45,12 @@
         </div>
 
         <div class="form-group">
-          <label for="confirmPassword">Confirmar Senha</label>
+          <label for="confirmPassword">Confirm Password</label>
           <input
             type="password"
             id="confirmPassword"
             v-model="formData.confirmPassword"
-            placeholder="Digite a senha novamente"
+            placeholder="Enter password again"
             minlength="6"
             required
             :disabled="loading"
@@ -66,14 +66,14 @@
         </div>
 
         <button type="submit" class="btn-primary" :disabled="loading">
-          <span v-if="loading">Criando conta...</span>
-          <span v-else>Criar Conta</span>
+          <span v-if="loading">Creating account...</span>
+          <span v-else>Create Account</span>
         </button>
       </form>
 
       <div class="auth-footer">
-        <p>Já tem uma conta?</p>
-        <router-link to="/login" class="link">Fazer Login</router-link>
+        <p>Already have an account?</p>
+        <router-link to="/login" class="link">Log In</router-link>
       </div>
     </div>
   </div>
@@ -103,12 +103,12 @@ const handleRegister = async () => {
 
   // Validar senhas
   if (formData.value.password !== formData.value.confirmPassword) {
-    error.value = 'As senhas não coincidem';
+    error.value = 'Passwords do not match';
     return;
   }
 
   if (formData.value.password.length < 6) {
-    error.value = 'A senha deve ter no mínimo 6 caracteres';
+    error.value = 'Password must be at least 6 characters';
     return;
   }
 
@@ -121,7 +121,7 @@ const handleRegister = async () => {
       password: formData.value.password
     });
 
-    success.value = 'Conta criada com sucesso! Complete seu perfil...';
+    success.value = 'Account created successfully! Complete your profile...';
     
     // Salvar token se retornado
     if (response.data.access_token) {
@@ -135,8 +135,8 @@ const handleRegister = async () => {
     }, 1500);
 
   } catch (err) {
-    console.error('Erro ao registrar:', err);
-    error.value = err.response?.data?.detail || 'Erro ao criar conta. Tente novamente.';
+    console.error('Error registering:', err);
+    error.value = err.response?.data?.detail || 'Error creating account. Try again.';
   } finally {
     loading.value = false;
   }
@@ -159,7 +159,8 @@ const handleRegister = async () => {
 .auth-card {
   background: var(--bg-card);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(26, 179, 148, 0.2);
+  box-shadow: 0 10px 30px rgba(26, 179, 148, 0.15);
   padding: 3rem;
   width: 100%;
   max-width: 450px;
@@ -214,10 +215,10 @@ const handleRegister = async () => {
 
 .form-group input {
   padding: 0.875rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid #1ab394;
   border-radius: 8px;
   font-size: 1rem;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   background: var(--input-bg);
   color: var(--text-primary);
 }
@@ -228,8 +229,8 @@ const handleRegister = async () => {
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.1);
+  border-color: #15976d;
+  box-shadow: 0 0 0 3px rgba(26, 179, 148, 0.2);
 }
 
 .form-group input:disabled {
@@ -256,7 +257,7 @@ const handleRegister = async () => {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #1ab394 0%, #15935f 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
   border: none;
   padding: 1rem;
@@ -264,13 +265,13 @@ const handleRegister = async () => {
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s ease;
   margin-top: 0.5rem;
 }
 
 .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 8px 20px rgba(26, 179, 148, 0.3);
 }
 
 .btn-primary:disabled {
