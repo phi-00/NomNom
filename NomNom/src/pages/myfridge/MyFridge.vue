@@ -235,23 +235,25 @@
   // Filter ingredients by food group
   const getIngredientsByGroup = (grupo) => {
     if (!ingredientes.value) return [];
+    if (grupo === null) return ingredientes.value;
     return ingredientes.value.filter(item => item.grupo_alimentar === grupo);
   };
 
   const tabs = ref([
-    { title: 'Meat', grupo_alimentar: 'carnes', value: '0' },
-    { title: 'Fish', grupo_alimentar: 'peixe', value: '1' },
-    { title: 'Eggs', grupo_alimentar: 'ovos', value: '2' },
-    { title: 'Cereals and Derivatives', grupo_alimentar: 'cereais e derivados', value: '3' },
-    { title: 'Tubers', grupo_alimentar: 'tuberculos', value: '4' },
-    { title: 'Vegetables', grupo_alimentar: 'horticulas', value: '5' },
-    { title: 'Fruit', grupo_alimentar: 'fruta', value: '6' },
-    { title: 'Fats and Oils', grupo_alimentar: 'gorduras e óleos', value: '7' },
-    { title: 'Dairy', grupo_alimentar: 'laticíneos', value: '8' },
-    { title: 'Legumes', grupo_alimentar: 'leguminosas', value: '9' },
-    { title: 'Spices', grupo_alimentar: 'especiarias', value: '10' },
-    { title: 'Water', grupo_alimentar: 'água', value: '11' },
-    { title: 'Others', grupo_alimentar: 'outros', value: '12' },
+    { title: 'All', grupo_alimentar: null, value: '0' },
+    { title: 'Meat', grupo_alimentar: 'carnes', value: '1' },
+    { title: 'Fish', grupo_alimentar: 'peixe', value: '2' },
+    { title: 'Eggs', grupo_alimentar: 'ovos', value: '3' },
+    { title: 'Cereals and Derivatives', grupo_alimentar: 'cereais e derivados', value: '4' },
+    { title: 'Tubers', grupo_alimentar: 'tuberculos', value: '5' },
+    { title: 'Vegetables', grupo_alimentar: 'horticulas', value: '6' },
+    { title: 'Fruit', grupo_alimentar: 'fruta', value: '7' },
+    { title: 'Fats and Oils', grupo_alimentar: 'gorduras e óleos', value: '8' },
+    { title: 'Dairy', grupo_alimentar: 'laticíneos', value: '9' },
+    { title: 'Legumes', grupo_alimentar: 'leguminosas', value: '10' },
+    { title: 'Spices', grupo_alimentar: 'especiarias', value: '11' },
+    { title: 'Water', grupo_alimentar: 'água', value: '12' },
+    { title: 'Others', grupo_alimentar: 'outros', value: '13' },
   ]);
 
   // Handle search input
