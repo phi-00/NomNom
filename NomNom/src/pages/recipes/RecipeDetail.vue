@@ -248,6 +248,7 @@ const toggleFavorite = async () => {
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border: 2px solid #1ab394;
 }
 
 .recipe-header {
