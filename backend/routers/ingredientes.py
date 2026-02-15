@@ -186,6 +186,8 @@ async def create_ingrediente(ingredient_data: Dict[str, Any]):
         unidade_medida = ingredient_data.get("unidade_medida", "g")
         calorias = ingredient_data.get("calorias", 0)
         
+        print(f"Creating ingredient with data: nome={nome}, grupo_alimentar={grupo_alimentar}, unidade_medida={unidade_medida}, calorias={calorias}")
+        
         if not nome or not grupo_alimentar:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -193,24 +195,31 @@ async def create_ingrediente(ingredient_data: Dict[str, Any]):
             )
         
         # Insert new ingredient
-        response = supabase.table("Ingrediente").insert({
+        insert_data = {
             "nome": nome,
             "grupo_alimentar": grupo_alimentar,
             "unidade_medida": unidade_medida,
             "calorias": calorias
-        }).execute()
+        }
+        
+        print(f"Inserting data to Ingrediente table: {insert_data}")
+        response = supabase.table("Ingrediente").insert(insert_data).execute()
+        print(f"Supabase response: {response}")
         
         if response.data and len(response.data) > 0:
             return response.data[0]
         
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Erro ao criar ingrediente"
+            detail="Erro ao criar ingrediente - no data returned from insert"
         )
         
     except HTTPException:
         raise
     except Exception as e:
+        print(f"Exception creating ingredient: {type(e).__name__}: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Erro ao criar ingrediente: {str(e)}"

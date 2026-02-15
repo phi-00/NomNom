@@ -219,8 +219,9 @@
 
   const newIngredient = ref({
     nome: '',
-    calorias: null,
-    grupo_alimentar: ''
+    calorias: 0,
+    grupo_alimentar: '',
+    unidade_medida: 'g'
   });
 
   onMounted(async () => {
@@ -268,8 +269,9 @@
     // Clear new ingredient form when selecting from database
     newIngredient.value = {
       nome: '',
-      calorias: null,
-      grupo_alimentar: ''
+      calorias: 0,
+      grupo_alimentar: '',
+      unidade_medida: 'g'
     };
   };
 
@@ -310,7 +312,12 @@
       // If creating a new ingredient
       if (!selectedIngredient.value && newIngredient.value.nome) {
         console.log('Creating new ingredient:', newIngredient.value);
-        const created = await createIngredient(newIngredient.value);
+        // Ensure calorias is a number
+        const ingredientData = {
+          ...newIngredient.value,
+          calorias: Number(newIngredient.value.calorias) || 0
+        };
+        const created = await createIngredient(ingredientData);
         console.log('Created ingredient response:', created);
         
         // Try different possible ID field names
@@ -363,8 +370,9 @@
     dialogError.value = null;
     newIngredient.value = {
       nome: '',
-      calorias: null,
-      grupo_alimentar: ''
+      calorias: 0,
+      grupo_alimentar: '',
+      unidade_medida: 'g'
     };
   };
 
