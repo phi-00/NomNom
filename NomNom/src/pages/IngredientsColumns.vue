@@ -12,7 +12,7 @@ onMounted(() => {
 <template>
   <div class="ingredientes-container">
     <div class="header">
-      <h1>🍎 Ingredientes - Nome e Calorias</h1>
+      <h1>Ingredientes - Nome e Calorias</h1>
       <p class="subtitle">Visualize todos os ingredientes cadastrados no sistema</p>
     </div>
 
@@ -244,7 +244,7 @@ onMounted(() => {
 }
 
 .ingrediente-card {
-  background: #1a1a1a;
+  background-color: var(--bg-primary);
   border: 2px solid rgba(26, 179, 148, 0.3);
   border-radius: 8px;
   padding: 1rem;
@@ -322,7 +322,7 @@ onMounted(() => {
 table {
   width: 100%;
   border-collapse: collapse;
-  background: #1a1a1a;
+  background-color: var(--bg-primary);
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);

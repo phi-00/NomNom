@@ -8,7 +8,6 @@
           <router-link to="/recipes" class="nav-link">Recipes</router-link>
           <router-link to="/myfridge" class="nav-link">MyFridge</router-link>
           <router-link to="/shoppinglist" class="nav-link">ShoppingList</router-link>
-          <router-link to="/ingredientes" class="nav-link">Ingredientes</router-link>
         </template>
       </div>
     </div>
