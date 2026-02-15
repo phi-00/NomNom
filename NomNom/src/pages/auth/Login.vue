@@ -104,8 +104,8 @@ const handleLogin = async () => {
         // Se perfil não está completo, redirecionar para completar perfil
         router.push('/complete-profile');
       } else {
-        // Se perfil está completo, redirecionar para home
-        router.push('/home');
+        // Se perfil está completo, redirecionar para recipes
+        router.push('/recipes');
       }
     }, 1000);
 
