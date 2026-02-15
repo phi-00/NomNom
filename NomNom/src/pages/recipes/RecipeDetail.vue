@@ -462,9 +462,9 @@ const toggleFavorite = async () => {
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 2rem;
-  border: 2px solid var(--accent-color);
-  background: white;
-  color: var(--accent-color);
+  border: none;
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
+  color: white;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
@@ -472,13 +472,12 @@ const toggleFavorite = async () => {
   transition: all 0.3s ease;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(26, 179, 148, 0.3);
 }
 
 .btn-favorite:hover:not(:disabled) {
-  background: var(--accent-color);
-  color: white;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(26, 179, 148, 0.3);
+  box-shadow: 0 6px 16px rgba(26, 179, 148, 0.4);
 }
 
 .btn-favorite.favorite {
