@@ -1,106 +1,156 @@
 <template>
   <div class="shopping-list-wrapper">
     <Toast />
-    <Dialog v-model:visible="showNotFoundDialog" modal header="Items Not Found" :style="{ width: '600px' }">
-      <div class="not-found-dialog">
-        <p class="dialog-message">The following items were not found in the database:</p>
-        
-        <div v-for="item in notFoundItems" :key="item" class="not-found-item">
-          <h3>"{{ item }}"</h3>
-          
-          <!-- Search similar -->
-          <div class="search-section">
-            <Button @click="searchSimilar(item)" label="Search Similar" icon="pi pi-search" size="small" />
-            
-            <div v-if="similarResults[item]?.length > 0" class="similar-results">
-              <p class="similar-title">Similar items found:</p>
-              <div v-for="similar in similarResults[item]" :key="similar.id" class="similar-item">
-                <span>{{ similar.nome }} ({{ similar.grupo_alimentar }})</span>
-                <Button @click="useExistingItem(item, similar)" label="Use This" size="small" />
-              </div>
-            </div>
-            <div v-else-if="similarResults[item] !== undefined" class="no-results">
-              No similar items found
-            </div>
-          </div>
-
-          <!-- Create new -->
-          <div class="create-section">
-            <Button @click="toggleCreateForm(item)" 
-                    :label="showCreateForm[item] ? 'Cancel' : 'Create New Ingredient'" 
-                    icon="pi pi-plus" 
-                    size="small"
-                    severity="success" />
-            
-            <div v-if="showCreateForm[item]" class="create-form">
-              <InputText v-model="newIngredient[item].nome" placeholder="Name" class="form-input" />
-              <Select v-model="newIngredient[item].grupo_alimentar" 
-                      :options="foodGroups" 
-                      placeholder="Food Group" 
-                      class="form-input" />
-              <InputText v-model="newIngredient[item].unidade_medida" placeholder="Unit (e.g., g, ml, un)" class="form-input" />
-              <InputNumber v-model="newIngredient[item].calorias" placeholder="Calories" class="form-input" />
-              <Button @click="createAndAddItem(item)" label="Create & Add to Fridge" severity="success" />
-            </div>
-          </div>
-
-          <Divider v-if="notFoundItems.indexOf(item) < notFoundItems.length - 1" />
-        </div>
-      </div>
-      
-      <template #footer>
-        <Button label="Close" @click="showNotFoundDialog = false" severity="secondary" />
-      </template>
-    </Dialog>
-
+    
     <section class="shoppinglist">
       <h1>Shopping List</h1>
 
-    <div class="add-item-container">
-      <InputText 
-        v-model="newItemText" 
-        placeholder="New item..." 
-        @keyup.enter="addItem"
-        class="item-input"
-      />
-      <button @click="addItem" class="add-button">Adicionar</button>
-    </div>
+      <!-- Search and Add Section -->
+      <div class="search-section">
+        <div class="search-container">
+          <InputText 
+            v-model="searchText" 
+            placeholder="Digite o nome do ingrediente..." 
+            @keyup.enter="searchSimilar"
+            class="search-input"
+          />
+          <InputNumber 
+            v-model="quantidadeSelected" 
+            :min="1" 
+            placeholder="Qtd"
+            class="quantity-input"
+            mode="decimal"
+            :use-grouping="false"
+          />
+          <Button @click="searchSimilar" label="Procurar" icon="pi pi-search" />
+        </div>
 
-    <div class="items-container">
-      <div v-if="shoppingItems.length === 0" class="empty-message">
-        Your shopping list is empty.
+        <!-- Similar Results -->
+        <div v-if="similarResults.length > 0" class="similar-results">
+          <h3>Ingredientes semelhantes:</h3>
+          <div v-for="ingredient in similarResults" :key="ingredient.id" class="similar-item">
+            <span>{{ ingredient.nome }} ({{ ingredient.grupo_alimentar }})</span>
+            <Button 
+              @click="addToList(ingredient)" 
+              label="Adicionar" 
+              icon="pi pi-plus"
+              size="small"
+              severity="success"
+            />
+          </div>
+        </div>
+
+        <div v-if="searchPerformed && similarResults.length === 0" class="no-results">
+          Nenhum ingrediente semelhante encontrado.
+          <Button 
+            @click="showCreateDialog = true" 
+            label="Criar novo" 
+            icon="pi pi-plus"
+            size="small"
+            severity="success"
+            class="create-btn"
+          />
+        </div>
       </div>
-      
-      <div 
-        v-for="item in shoppingItems" 
-        :key="item.id" 
-        class="item-row"
+
+      <!-- Dialog para criar novo ingrediente -->
+      <Dialog 
+        v-model:visible="showCreateDialog" 
+        modal 
+        header="Criar novo ingrediente"
+        :style="{ width: '500px' }"
       >
-        <Checkbox 
-          v-model="item.completed" 
-          :inputId="`item-${item.id}`" 
-          :binary="true"
-        />
-        <label 
-          :for="`item-${item.id}`" 
-          :class="{ 'completed': item.completed }"
-          class="item-label"
+        <div class="create-form-dialog">
+          <div class="form-group">
+            <label>Nome do ingrediente: *</label>
+            <InputText 
+              v-model="newIngredientForm.nome"
+              placeholder="Ex: Banana"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Grupo alimentar: *</label>
+            <Dropdown 
+              v-model="newIngredientForm.grupo_alimentar"
+              :options="foodGroups"
+              placeholder="Selecione um grupo"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Unidade de medida:</label>
+            <InputText 
+              v-model="newIngredientForm.unidade_medida"
+              placeholder="Ex: g, ml, un"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Calorias (por 100g):</label>
+            <InputNumber 
+              v-model="newIngredientForm.calorias"
+              :min="0"
+              class="form-input"
+            />
+          </div>
+        </div>
+
+        <template #footer>
+          <Button 
+            label="Cancelar" 
+            @click="showCreateDialog = false" 
+            severity="secondary" 
+          />
+          <Button 
+            label="Criar e adicionar" 
+            @click="createAndAddIngredient" 
+            severity="success"
+          />
+        </template>
+      </Dialog>
+
+      <!-- Shopping List Items -->
+      <div class="items-container">
+        <h2>Minha Lista</h2>
+        
+        <div v-if="shoppingItems.length === 0" class="empty-message">
+          Sua lista de compras está vazia.
+        </div>
+        
+        <div 
+          v-for="item in shoppingItems" 
+          :key="item.id" 
+          class="item-row"
         >
-          {{ item.text }}
-        </label>
-        <button @click="removeItem(item.id)" class="remove-button">
-          ×
+          <Checkbox 
+            v-model="item.completed" 
+            :inputId="`item-${item.id}`" 
+            :binary="true"
+          />
+          <label 
+            :for="`item-${item.id}`" 
+            :class="{ 'completed': item.completed }"
+            class="item-label"
+          >
+            {{ item.text }} ({{ item.quantidade }})
+          </label>
+          <button @click="removeItem(item.id)" class="remove-button">
+            ×
+          </button>
+        </div>
+      </div>
+
+      <!-- Save Changes -->
+      <div v-if="hasCompletedItems" class="save-container">
+        <button @click="saveChanges" class="save-button">
+          Adicionar ao Frigorífico
         </button>
       </div>
-    </div>
-
-    <div v-if="hasCompletedItems" class="save-container">
-      <button @click="saveChanges" class="save-button">
-        Add to fridge
-      </button>
-    </div>
-
-  </section>
+    </section>
   </div>
 </template>
 
@@ -109,307 +159,389 @@ import { ref, computed, onMounted } from 'vue';
 import Checkbox from 'primevue/checkbox';
 import InputText from 'primevue/inputtext';
 import InputNumber from 'primevue/inputnumber';
-import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
-import Select from 'primevue/select';
-import Divider from 'primevue/divider';
+import Dialog from 'primevue/dialog';
+import Dropdown from 'primevue/dropdown';
 import { useIngredients } from '../../composables/useIngredients';
+import { useShoppingList } from '../../composables/useShoppingList';
 import { useToast } from 'primevue/usetoast';
 import Toast from 'primevue/toast';
 
 // Composables
-const { searchIngredientByName, searchSimilarIngredients, createIngredient, addToInventory, loading } = useIngredients();
+const { searchSimilarIngredients, addToInventory, createIngredient } = useIngredients();
+const { fetchShoppingList, addToShoppingList, removeFromShoppingList, shoppingListItems } = useShoppingList();
 const toast = useToast();
 
+// Food groups
+const foodGroups = ['fruta', 'ovos', 'laticíneos', 'pescado', 'especiarias', 'cereais e derivados, tuberculos', 'hortícolas', 'carnes', 'leguminosas'];
+
 // Reactive data
-const newItemText = ref('');
+const searchText = ref('');
+const quantidadeSelected = ref(1);
+const similarResults = ref([]);
 const shoppingItems = ref([]);
 const user = ref(null);
-const showNotFoundDialog = ref(false);
-const notFoundItems = ref([]);
-const similarResults = ref({});
-const showCreateForm = ref({});
-const newIngredient = ref({});
-const foodGroups = ['fruta', 'ovos', 'laticíneos', 'pescado', 'especiarias', 'cereais e derivados, tuberculos', 'hortícolas', 'carnes', 'leguminosas'];
-let nextId = 1;
+const searchPerformed = ref(false);
+const showCreateDialog = ref(false);
+const newIngredientForm = ref({
+  nome: '',
+  grupo_alimentar: '',
+  unidade_medida: 'g',
+  calorias: 0
+});
 
-// Get user from localStorage on mount
-onMounted(() => {
+// Carrega usuário e lista de compras ao montar
+onMounted(async () => {
   const userData = localStorage.getItem('user');
   if (userData) {
     user.value = JSON.parse(userData);
+    await loadShoppingList();
   }
 });
 
-// Add new item to the list
-const addItem = () => {
-  if (newItemText.value.trim() !== '') {
-    shoppingItems.value.push({
-      id: nextId++,
-      text: newItemText.value.trim(),
-      completed: false
-    });
-    newItemText.value = '';
+// Carrega lista de compras do banco
+const loadShoppingList = async () => {
+  try {
+    await fetchShoppingList(user.value.email);
+    shoppingItems.value = shoppingListItems.value.map(item => ({
+      id: item.idIngrediente,
+      text: item.ingrediente.nome,
+      completed: false,
+      quantidade: item.quantidade,
+      ingredienteId: item.idIngrediente
+    }));
+  } catch (err) {
+    console.error('Erro ao carregar lista de compras:', err);
   }
 };
 
-const removeItem = (id) => {
-  shoppingItems.value = shoppingItems.value.filter(item => item.id !== id);
+// Procura ingredientes semelhantes
+const searchSimilar = async () => {
+  if (searchText.value.trim() === '') return;
+  
+  try {
+    searchPerformed.value = true;
+    const results = await searchSimilarIngredients(searchText.value.trim());
+    similarResults.value = results || [];
+  } catch (err) {
+    console.error('Erro ao procurar ingredientes:', err);
+    toast.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Erro ao procurar ingredientes',
+      life: 3000
+    });
+  }
+};
+
+// Adiciona ingrediente à lista de compras
+const addToList = async (ingredient) => {
+  try {
+    // Verifica se já existe na lista
+    const exists = shoppingItems.value.find(item => item.id === ingredient.id);
+    
+    if (exists) {
+      toast.add({
+        severity: 'info',
+        summary: 'Já existe',
+        detail: 'Este ingrediente já está na sua lista',
+        life: 2000
+      });
+      return;
+    }
+
+    const quantidade = quantidadeSelected.value || 1;
+
+    // Adiciona ao banco de dados
+    await addToShoppingList(user.value.email, ingredient.id, quantidade);
+    
+    // Adiciona localmente
+    shoppingItems.value.push({
+      id: ingredient.id,
+      text: ingredient.nome,
+      completed: false,
+      quantidade: quantidade,
+      ingredienteId: ingredient.id
+    });
+
+    // Limpa busca e reseta quantidade
+    searchText.value = '';
+    quantidadeSelected.value = 1;
+    similarResults.value = [];
+    searchPerformed.value = false;
+
+    toast.add({
+      severity: 'success',
+      summary: 'Adicionado',
+      detail: `${ingredient.nome} adicionado à lista (${quantidade} un)`,
+      life: 2000
+    });
+  } catch (err) {
+    console.error('Erro ao adicionar:', err);
+    toast.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Erro ao adicionar ingrediente',
+      life: 3000
+    });
+  }
+};
+
+// Criar novo ingrediente e adicionar à lista
+const createAndAddIngredient = async () => {
+  try {
+    // Validar campos obrigatórios
+    if (!newIngredientForm.value.nome || !newIngredientForm.value.grupo_alimentar) {
+      toast.add({
+        severity: 'warn',
+        summary: 'Aviso',
+        detail: 'Por favor, preencha nome e grupo alimentar',
+        life: 3000
+      });
+      return;
+    }
+
+    // Criar ingrediente
+    const created = await createIngredient(newIngredientForm.value);
+
+    const quantidade = quantidadeSelected.value || 1;
+
+    // Adicionar à lista de compras no banco
+    await addToShoppingList(user.value.email, created.id, quantidade);
+
+    // Adicionar localmente
+    shoppingItems.value.push({
+      id: created.id,
+      text: created.nome,
+      completed: false,
+      quantidade: quantidade,
+      ingredienteId: created.id
+    });
+
+    // Limpar e resetar
+    searchText.value = '';
+    quantidadeSelected.value = 1;
+    similarResults.value = [];
+    searchPerformed.value = false;
+    showCreateDialog.value = false;
+    newIngredientForm.value = {
+      nome: '',
+      grupo_alimentar: '',
+      unidade_medida: 'g',
+      calorias: 0
+    };
+
+    toast.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `"${created.nome}" criado e adicionado à lista (${quantidade} un)`,
+      life: 3000
+    });
+  } catch (err) {
+    console.error('Erro ao criar ingrediente:', err);
+    toast.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Erro ao criar ingrediente',
+      life: 3000
+    });
+  }
+};
+
+// Remove item da lista
+const removeItem = async (id) => {
+  try {
+    await removeFromShoppingList(user.value.email, id);
+    shoppingItems.value = shoppingItems.value.filter(item => item.id !== id);
+    
+    toast.add({
+      severity: 'success',
+      summary: 'Removido',
+      detail: 'Item removido da lista',
+      life: 2000
+    });
+  } catch (err) {
+    console.error('Erro ao remover:', err);
+    toast.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Erro ao remover item',
+      life: 3000
+    });
+  }
 };
 
 const hasCompletedItems = computed(() => {
   return shoppingItems.value.some(item => item.completed);
 });
 
+// Salva itens comprados (adiciona ao frigorífico e remove da lista)
 const saveChanges = async () => {
   if (!user.value) {
-    toast.add({ 
-      severity: 'error', 
-      summary: 'Error', 
-      detail: 'Please log in to add items to your fridge', 
-      life: 3000 
+    toast.add({
+      severity: 'error',
+      summary: 'Erro',
+      detail: 'Por favor, faça login',
+      life: 3000
     });
     return;
   }
 
   const completedItems = shoppingItems.value.filter(item => item.completed);
-  
   if (completedItems.length === 0) return;
 
   let addedCount = 0;
-  let itemsNotFound = [];
 
   for (const item of completedItems) {
     try {
-      const ingredient = await searchIngredientByName(item.text);
-      
-      if (ingredient) {
-        await addToInventory(user.value.email, ingredient.id, 1);
-        addedCount++;
-      } else {
-        itemsNotFound.push(item.text);
-      }
+      await addToInventory(user.value.email, item.ingredienteId, item.quantidade || 1);
+      await removeFromShoppingList(user.value.email, item.ingredienteId);
+      addedCount++;
     } catch (err) {
-      console.error(`Error adding ${item.text}:`, err);
-      itemsNotFound.push(item.text);
+      console.error(`Erro ao processar ${item.text}:`, err);
     }
   }
 
   shoppingItems.value = shoppingItems.value.filter(item => !item.completed);
 
   if (addedCount > 0) {
-    toast.add({ 
-      severity: 'success', 
-      summary: 'Success', 
-      detail: `${addedCount} item(s) added to your fridge!`, 
-      life: 3000 
-    });
-  }
-
-  if (itemsNotFound.length > 0) {
-    // Initialize form data for each not found item
-    notFoundItems.value = itemsNotFound;
-    
-    // Reset reactive objects
-    similarResults.value = {};
-    showCreateForm.value = {};
-    newIngredient.value = {};
-    
-    itemsNotFound.forEach((item) => {
-      showCreateForm.value[item] = false;
-      newIngredient.value[item] = {
-        nome: item,
-        grupo_alimentar: '',
-        unidade_medida: 'g',
-        calorias: 0
-      };
-    });
-    showNotFoundDialog.value = true;
-  }
-}
-
-const searchSimilar = async (itemName) => {
-  const results = await searchSimilarIngredients(itemName);
-  // Create a new object to ensure Vue reactivity
-  similarResults.value = { ...similarResults.value, [itemName]: results };
-};
-
-const toggleCreateForm = (itemName) => {
-  showCreateForm.value = { ...showCreateForm.value, [itemName]: !showCreateForm.value[itemName] };
-};
-
-const useExistingItem = async (originalName, ingredient) => {
-  try {
-    await addToInventory(user.value.email, ingredient.id, 1);
-    toast.add({ 
-      severity: 'success', 
-      summary: 'Success', 
-      detail: `"${originalName}" added as "${ingredient.nome}" to your fridge!`, 
-      life: 3000 
-    });
-    
-    // Remove from not found list and clean up related data
-    notFoundItems.value = notFoundItems.value.filter(item => item !== originalName);
-    
-    // Clean up the data for the removed item
-    const newSimilarResults = { ...similarResults.value };
-    const newShowCreateForm = { ...showCreateForm.value };
-    const newIngredientData = { ...newIngredient.value };
-    
-    delete newSimilarResults[originalName];
-    delete newShowCreateForm[originalName];
-    delete newIngredientData[originalName];
-    
-    similarResults.value = newSimilarResults;
-    showCreateForm.value = newShowCreateForm;
-    newIngredient.value = newIngredientDataData;
-    
-    if (notFoundItems.value.length === 0) {
-      showNotFoundDialog.value = false;
-    }
-  } catch (err) {
-    console.error('Error in useExistingItem:', err);
-    toast.add({ 
-      severity: 'error', 
-      summary: 'Error', 
-      detail: err.response?.data?.detail || 'Failed to add item to fridge', 
-      life: 5000 
+    toast.add({
+      severity: 'success',
+      summary: 'Sucesso',
+      detail: `${addedCount} item(ns) adicionado(s) ao frigorífico!`,
+      life: 3000
     });
   }
 };
-
-const createAndAddItem = async (originalName) => {
-  const ingredientData = newIngredient.value[originalName];
-  
-  if (!ingredientData.nome || !ingredientData.grupo_alimentar) {
-    toast.add({ 
-      severity: 'warn', 
-      summary: 'Warning', 
-      detail: 'Please fill in name and food group', 
-      life: 3000 
-    });
-    return;
-  }
-  
-  try {
-    // Create the new ingredient
-    const created = await createIngredient(ingredientData);
-    
-    // Add to inventory
-    await addToInventory(user.value.email, created.id, 1);
-    
-    toast.add({ 
-      severity: 'success', 
-      summary: 'Success', 
-      detail: `"${ingredientData.nome}" created and added to your fridge!`, 
-      life: 3000 
-    });
-    
-    // Remove from not found list and clean up related data
-    notFoundItems.value = notFoundItems.value.filter(item => item !== originalName);
-    
-    // Clean up the data for the removed item
-    const newSimilarResults = { ...similarResults.value };
-    const newShowCreateForm = { ...showCreateForm.value };
-    const newNewIngredient = { ...newIngredient.value };
-    
-    delete newSimilarResults[originalName];
-    delete newShowCreateForm[originalName];
-    delete newNewIngredient[originalName];
-    
-    similarResults.value = newSimilarResults;
-    showCreateForm.value = newShowCreateForm;
-    newIngredient.value = newNewIngredient;
-    
-    if (notFoundItems.value.length === 0) {
-      showNotFoundDialog.value = false;
-    }
-  } catch (err) {
-    toast.add({ 
-      severity: 'error', 
-      summary: 'Error', 
-      detail: 'Failed to create ingredient', 
-      life: 3000 
-    });
-  }
-}
-
 </script>
 
 <style scoped>
 .shopping-list-wrapper {
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-primary);
 }
 
 .shoppinglist {
   display: flex;
   flex-direction: column;
-  align-items: center;
   padding: 2rem;
-  min-height: 60vh;
-  font-family: 'Nunito Sans';
-  max-width: 600px;
+  max-width: 800px;
   margin: 0 auto;
+  font-family: 'Nunito Sans';
 }
 
 h1 {
   color: #1ab394;
-  margin-bottom: 0.5rem;
+  margin-bottom: 2rem;
+  font-size: 2.5rem;
 }
 
-p {
-  color: var(--text-secondary);
+h2 {
+  color: #1ab394;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+h3 {
+  color: #1ab394;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Search Section */
+.search-section {
+  background-color: var(--bg-card);
+  border: 1px solid rgba(26, 179, 148, 0.2);
+  border-radius: 12px;
+  padding: 2rem;
   margin-bottom: 2rem;
 }
 
-/* Add item section */
-.add-item-container {
+.search-container {
   display: flex;
-  gap: 0.5rem;
-  width: 100%;
-  margin-bottom: 2rem;
-  font-family: 'Nunito Sans';
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
 }
 
-.item-input {
+.search-input {
   flex: 1;
   padding: 0.75rem;
   font-size: 1rem;
-  border: 2px solid var(--border-color);
+  border: 2px solid rgba(26, 179, 148, 0.3);
   border-radius: 8px;
   background-color: var(--input-bg);
   color: var(--text-primary);
-  transition: border-color 0.3s;
+  font-family: 'Nunito Sans';
 }
 
-.item-input:focus {
+.search-input:focus {
   outline: none;
   border-color: #1ab394;
 }
 
-.add-button {
-  padding: 0.75rem 1.5rem;
-  background-color: #1ab394;
-  color: white;
-  border: none;
+.quantity-input {
+  min-width: 90px !important;
+  width: fit-content !important;
+}
+
+:deep(.quantity-input .p-inputnumber-input) {
+  padding: 0.75rem !important;
+  font-size: 1rem !important;
+  border: 2px solid rgba(26, 179, 148, 0.3) !important;
+  border-radius: 8px !important;
+  background-color: var(--input-bg) !important;
+  color: var(--text-primary) !important;
+  font-family: 'Nunito Sans' !important;
+  width: 80px !important;
+}
+
+:deep(.quantity-input .p-inputnumber-input:focus) {
+  outline: none !important;
+  border-color: #1ab394 !important;
+}
+
+:deep(.quantity-input .p-inputnumber-button) {
+  width: 24px !important;
+  padding: 0 !important;
+}
+
+/* Similar Results */
+.similar-results {
+  background-color: rgba(26, 179, 148, 0.1);
+  border: 1px solid rgba(26, 179, 148, 0.2);
   border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-weight: 600;
+  padding: 1.5rem;
+  margin-top: 1rem;
 }
 
-.add-button:hover {
-  background-color: #148f7a;
-}
-
-/* Items container */
-.items-container {
-  width: 100%;
+.similar-item {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  background-color: var(--bg-card);
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+}
+
+.no-results {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 1.5rem;
+  font-style: italic;
+}
+
+/* Items Container */
+.items-container {
+  background-color: var(--bg-card);
+  border: 1px solid rgba(26, 179, 148, 0.2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .empty-message {
@@ -422,25 +554,25 @@ p {
 .item-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   padding: 1rem;
-  background-color: var(--bg-card);
-  border: 1px solid rgba(26, 179, 148, 0.2);
+  background-color: rgba(26, 179, 148, 0.05);
+  border: 1px solid rgba(26, 179, 148, 0.1);
   border-radius: 8px;
+  margin-bottom: 0.75rem;
   transition: all 0.3s;
 }
 
 .item-row:hover {
-  background-color: var(--card-hover);
-  border-color: rgba(26, 179, 148, 0.4);
+  background-color: rgba(26, 179, 148, 0.1);
+  border-color: rgba(26, 179, 148, 0.3);
 }
 
 .item-label {
   flex: 1;
   cursor: pointer;
-  font-size: 1rem;
   color: var(--text-primary);
-  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1rem;
   transition: all 0.3s;
 }
 
@@ -467,161 +599,30 @@ p {
   justify-content: center;
 }
 
+.remove-button:hover {
+  background-color: #c82333;
+}
+
+/* Save Container */
+.save-container {
+  display: flex;
+  justify-content: center;
+}
+
 .save-button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem 2rem;
   background-color: #1ab394;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s;
   font-weight: 600;
-}
-
-.remove-button:hover {
-  background-color: #c82333;
+  transition: background-color 0.3s;
 }
 
 .save-button:hover {
   background-color: #148f7a;
-}
-
-.save-container {
-  width: 100%;
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: center;
-}
-
-/* Not Found Dialog Styles */
-.not-found-dialog {
-  padding: 1rem 0;
-  font-family: 'Nunito Sans';
-}
-
-:deep(.p-dialog) {
-  background-color: var(--bg-card) !important;
-  border: 1px solid rgba(26, 179, 148, 0.3) !important;
-}
-
-:deep(.p-dialog-header) {
-  background-color: var(--bg-card) !important;
-  border-bottom: 2px solid rgba(26, 179, 148, 0.3) !important;
-  padding: 1.5rem !important;
-  font-family: 'Nunito Sans', sans-serif !important;
-}
-
-:deep(.p-dialog-header-title) {
-  color: var(--text-primary) !important;
-  font-family: 'Nunito Sans';
-  font-weight: 600 !important;
-}
-
-:deep(.p-dialog-header-close) {
-  color: var(--text-primary) !important;
-  font-family: 'Nunito Sans';
-}
-
-:deep(.p-dialog-content) {
-  background-color: var(--bg-card) !important;
-  color: var(--text-primary) !important;
-  font-family: 'Nunito Sans';
-}
-
-:deep(.p-dialog-footer) {
-  background-color: var(--bg-card) !important;
-  border-top: 2px solid rgba(26, 179, 148, 0.3) !important;
-  padding: 1.5rem !important;
-  font-family: 'Nunito Sans';
-}
-
-.dialog-message {
-  margin-bottom: 1.5rem;
-  color: var(--text-secondary);
-  font-size: 0.95rem;
-  font-family: 'Nunito Sans';
-}
-
-.not-found-item {
-  margin: 1rem 0;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  border-left: 4px solid #1ab394;
-  font-family: 'Nunito Sans';
-}
-
-.not-found-item h3 {
-  color: #1ab394;
-  margin-bottom: 1rem;
-  font-family: 'Nunito Sans';
-}
-
-.search-section, .create-section {
-  margin: 1rem 0;
-}
-
-.similar-results {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  border: 1px solid rgba(26, 179, 148, 0.2);
-}
-
-.similar-title {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #1ab394;
-  font-family: 'Nunito Sans', sans-serif;
-}
-
-.similar-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem;
-  margin: 0.5rem 0;
-  background: var(--bg-card);
-  border-radius: 4px;
-  color: var(--text-primary);
-  font-family: 'Nunito Sans', sans-serif;
-}
-
-.no-results {
-  margin-top: 0.5rem;
-  color: var(--text-secondary);
-  font-style: italic;
-  font-family: 'Nunito Sans', sans-serif;
-}
-
-.create-form {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: var(--bg-secondary);
-  border-radius: 8px;
-  border: 1px solid rgba(26, 179, 148, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.form-input {
-  width: 100%;
-  font-family: 'Nunito Sans', sans-serif;
-}
-
-/* Statistics */
-.stats {
-  margin-top: 1.5rem;
-  padding: 1rem;
-  background-color: rgba(26, 179, 148, 0.15);
-  border-radius: 8px;
-  color: #1ab394;
-  font-weight: 600;
-  width: 100%;
-  text-align: center;
 }
 </style>
 
