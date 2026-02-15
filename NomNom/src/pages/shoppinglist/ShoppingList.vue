@@ -10,29 +10,29 @@
         <div class="search-container">
           <InputText 
             v-model="searchText" 
-            placeholder="Digite o nome do ingrediente..." 
+            placeholder="Type ingredient name..." 
             @keyup.enter="searchSimilar"
             class="search-input"
           />
           <InputNumber 
             v-model="quantidadeSelected" 
             :min="1" 
-            placeholder="Qtd"
+            placeholder="Qty"
             class="quantity-input"
             mode="decimal"
             :use-grouping="false"
           />
-          <Button @click="searchSimilar" label="Procurar" icon="pi pi-search" />
+          <Button @click="searchSimilar" label="Search" icon="pi pi-search" />
         </div>
 
         <!-- Similar Results -->
         <div v-if="similarResults.length > 0" class="similar-results">
-          <h3>Ingredientes semelhantes:</h3>
+          <h3>Similar ingredients:</h3>
           <div v-for="ingredient in similarResults" :key="ingredient.id" class="similar-item">
             <span>{{ ingredient.nome }} ({{ ingredient.grupo_alimentar }})</span>
             <Button 
               @click="addToList(ingredient)" 
-              label="Adicionar" 
+              label="Add" 
               icon="pi pi-plus"
               size="small"
               severity="success"
@@ -41,10 +41,10 @@
         </div>
 
         <div v-if="searchPerformed && similarResults.length === 0" class="no-results">
-          Nenhum ingrediente semelhante encontrado.
+          No similar ingredients found.
           <Button 
             @click="showCreateDialog = true" 
-            label="Criar novo" 
+            label="Create new" 
             icon="pi pi-plus"
             size="small"
             severity="success"
@@ -57,12 +57,12 @@
       <Dialog 
         v-model:visible="showCreateDialog" 
         modal 
-        header="Criar novo ingrediente"
+        header="Create new ingredient"
         :style="{ width: '500px' }"
       >
         <div class="create-form-dialog">
           <div class="form-group">
-            <label>Nome do ingrediente: *</label>
+            <label>Ingredient name: *</label>
             <InputText 
               v-model="newIngredientForm.nome"
               placeholder="Ex: Banana"
@@ -71,17 +71,17 @@
           </div>
 
           <div class="form-group">
-            <label>Grupo alimentar: *</label>
+            <label>Food group: *</label>
             <Dropdown 
               v-model="newIngredientForm.grupo_alimentar"
               :options="foodGroups"
-              placeholder="Selecione um grupo"
+              placeholder="Select a group"
               class="form-input"
             />
           </div>
 
           <div class="form-group">
-            <label>Unidade de medida:</label>
+            <label>Unit of measurement:</label>
             <InputText 
               v-model="newIngredientForm.unidade_medida"
               placeholder="Ex: g, ml, un"
@@ -90,7 +90,7 @@
           </div>
 
           <div class="form-group">
-            <label>Calorias (por 100g):</label>
+            <label>Calories (per 100g):</label>
             <InputNumber 
               v-model="newIngredientForm.calorias"
               :min="0"
@@ -101,12 +101,12 @@
 
         <template #footer>
           <Button 
-            label="Cancelar" 
+            label="Cancel" 
             @click="showCreateDialog = false" 
             severity="secondary" 
           />
           <Button 
-            label="Criar e adicionar" 
+            label="Create and add" 
             @click="createAndAddIngredient" 
             severity="success"
           />
@@ -115,10 +115,10 @@
 
       <!-- Shopping List Items -->
       <div class="items-container">
-        <h2>Minha Lista</h2>
+        <h2>My Shopping List</h2>
         
         <div v-if="shoppingItems.length === 0" class="empty-message">
-          Sua lista de compras está vazia.
+          Your shopping list is empty.
         </div>
         
         <div 
@@ -147,7 +147,7 @@
       <!-- Save Changes -->
       <div v-if="hasCompletedItems" class="save-container">
         <button @click="saveChanges" class="save-button">
-          Adicionar ao Frigorífico
+          Add to Fridge
         </button>
       </div>
     </section>
@@ -227,8 +227,8 @@ const searchSimilar = async () => {
     console.error('Erro ao procurar ingredientes:', err);
     toast.add({
       severity: 'error',
-      summary: 'Erro',
-      detail: 'Erro ao procurar ingredientes',
+      summary: 'Error',
+      detail: 'Error searching for ingredients',
       life: 3000
     });
   }
@@ -243,8 +243,8 @@ const addToList = async (ingredient) => {
     if (exists) {
       toast.add({
         severity: 'info',
-        summary: 'Já existe',
-        detail: 'Este ingrediente já está na sua lista',
+        summary: 'Already exists',
+        detail: 'This ingredient is already in your list',
         life: 2000
       });
       return;
@@ -272,16 +272,16 @@ const addToList = async (ingredient) => {
 
     toast.add({
       severity: 'success',
-      summary: 'Adicionado',
-      detail: `${ingredient.nome} adicionado à lista (${quantidade} un)`,
+      summary: 'Added',
+      detail: `${ingredient.nome} added to list (${quantidade} un)`,
       life: 2000
     });
   } catch (err) {
     console.error('Erro ao adicionar:', err);
     toast.add({
       severity: 'error',
-      summary: 'Erro',
-      detail: 'Erro ao adicionar ingrediente',
+      summary: 'Error',
+      detail: 'Error adding ingredient',
       life: 3000
     });
   }
@@ -294,8 +294,8 @@ const createAndAddIngredient = async () => {
     if (!newIngredientForm.value.nome || !newIngredientForm.value.grupo_alimentar) {
       toast.add({
         severity: 'warn',
-        summary: 'Aviso',
-        detail: 'Por favor, preencha nome e grupo alimentar',
+        summary: 'Warning',
+        detail: 'Please fill in the ingredient name and food group',
         life: 3000
       });
       return;
@@ -333,16 +333,16 @@ const createAndAddIngredient = async () => {
 
     toast.add({
       severity: 'success',
-      summary: 'Sucesso',
-      detail: `"${created.nome}" criado e adicionado à lista (${quantidade} un)`,
+      summary: 'Success',
+      detail: `"${created.nome}" created and added to list (${quantidade} un)`,
       life: 3000
     });
   } catch (err) {
     console.error('Erro ao criar ingrediente:', err);
     toast.add({
       severity: 'error',
-      summary: 'Erro',
-      detail: 'Erro ao criar ingrediente',
+      summary: 'Error',
+      detail: 'Error creating ingredient',
       life: 3000
     });
   }
@@ -356,16 +356,16 @@ const removeItem = async (id) => {
     
     toast.add({
       severity: 'success',
-      summary: 'Removido',
-      detail: 'Item removido da lista',
+      summary: 'Removed',
+      detail: 'Item removed from list',
       life: 2000
     });
   } catch (err) {
     console.error('Erro ao remover:', err);
     toast.add({
       severity: 'error',
-      summary: 'Erro',
-      detail: 'Erro ao remover item',
+      summary: 'Error',
+      detail: 'Error removing item',
       life: 3000
     });
   }
@@ -380,8 +380,8 @@ const saveChanges = async () => {
   if (!user.value) {
     toast.add({
       severity: 'error',
-      summary: 'Erro',
-      detail: 'Por favor, faça login',
+      summary: 'Error',
+      detail: 'Please log in',
       life: 3000
     });
     return;
@@ -407,8 +407,8 @@ const saveChanges = async () => {
   if (addedCount > 0) {
     toast.add({
       severity: 'success',
-      summary: 'Sucesso',
-      detail: `${addedCount} item(ns) adicionado(s) ao frigorífico!`,
+      summary: 'Success',
+      detail: `${addedCount} item(s) added to fridge!`,
       life: 3000
     });
   }
