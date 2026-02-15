@@ -29,9 +29,9 @@
             <label class="filter-label">Nível de Dificuldade</label>
             <select v-model="filters.dificuldade">
               <option value="">Todos</option>
-              <option value="Fácil">Fácil</option>
-              <option value="Médio">Médio</option>
-              <option value="Difícil">Difícil</option>
+              <option value="facil">Fácil</option>
+              <option value="medio">Médio</option>
+              <option value="dificil">Difícil</option>
             </select>
           </div>
 
@@ -40,11 +40,12 @@
             <label class="filter-label">Categoria</label>
             <select v-model="filters.categoria">
               <option value="">Todas</option>
-              <option value="Pequeno-almoço">Pequeno-almoço</option>
-              <option value="Almoço">Almoço</option>
-              <option value="Jantar">Jantar</option>
-              <option value="Lanche">Lanche</option>
-              <option value="Sobremesa">Sobremesa</option>
+              <option value="padaria">Padaria</option>
+              <option value="pastelaria">Pastelaria</option>
+              <option value="entrada">Entrada</option>
+              <option value="sopa">Sopa</option>
+              <option value="prato principal">Prato Principal</option>
+              <option value="bebida">Bebida</option>
             </select>
           </div>
 
@@ -53,11 +54,11 @@
             <label class="filter-label">Tipo de Cozinhado</label>
             <select v-model="filters.tipo_cozinhado">
               <option value="">Todos</option>
-              <option value="Assado">Assado</option>
-              <option value="Grelhado">Grelhado</option>
-              <option value="Frito">Frito</option>
-              <option value="Cozido">Cozido</option>
-              <option value="Cru">Cru</option>
+              <option value="frito">Frito</option>
+              <option value="assado">Assado</option>
+              <option value="cozido">Cozido</option>
+              <option value="grelhado">Grelhado</option>
+              <option value="estufado">Estufado</option>
             </select>
           </div>
 

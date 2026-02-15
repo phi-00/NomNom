@@ -434,7 +434,7 @@ async def get_recipe_with_ingredients(recipe_id: int):
                     "nome": ingredient.get("nome") or ingredient.get("name"),
                     "quantidade": quantidade,
                     "calorias": calorias_por_unidade,
-                    "unidade": rec_ing.get("unidade") or "g"  # g, ml, unidade, etc
+                    "unidade": ingredient.get("unidade_medida") or ingredient.get("unidade") or "g"  # Usa a unidade do ingrediente
                 })
         
         # 4. Calcular total de calorias (quantidade * calorias por unidade)
@@ -476,9 +476,9 @@ async def get_outras_receitas_filtradas(
     Retorna receitas "outras" (não favoritas) com filtros aplicados
     
     Filtros disponíveis:
-    - dificuldade: Fácil, Médio, Difícil
-    - categoria: Pequeno-almoço, Almoço, Jantar, Lanche, Sobremesa
-    - tipo_cozinhado: Assado, Grelhado, Frito, Cozido, Cru
+    - dificuldade: facil, medio, dificil
+    - categoria: padaria, pastelaria, entrada, sopa, prato principal, bebida
+    - tipo_cozinhado: frito, assado, cozido, grelhado, estufado
     - tempo_min/tempo_max: Range de tempo de preparação em minutos
     - porcoes_min/porcoes_max: Range de número de porções
     - only_my_ingredients: Se true, retorna apenas receitas com ingredientes que o usuário tem

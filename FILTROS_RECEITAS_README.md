@@ -13,29 +13,32 @@ Sistema completo de filtros para a página "Other Recipes" (`/recipes/otherrecip
    - Verifica a tabela `Inventário` para comparar com `ReceitaIngrediente`
 
 2. **Nível de Dificuldade** 📊
-   - Fácil
-   - Médio
-   - Difícil
+   - Fácil (enum: `facil`)
+   - Médio (enum: `medio`)
+   - Difícil (enum: `dificil`)
 
 3. **Categoria** 🍽️
-   - Pequeno-almoço
-   - Almoço
-   - Jantar
-   - Lanche
-   - Sobremesa
+   - Padaria (enum: `padaria`)
+   - Pastelaria (enum: `pastelaria`)
+   - Entrada (enum: `entrada`)
+   - Sopa (enum: `sopa`)
+   - Prato Principal (enum: `prato principal`)
+   - Bebida (enum: `bebida`)
 
 4. **Tipo de Cozinhado** 🔥
-   - Assado
-   - Grelhado
-   - Frito
-   - Cozido
-   - Cru
+   - Frito (enum: `frito`)
+   - Assado (enum: `assado`)
+   - Cozido (enum: `cozido`)
+   - Grelhado (enum: `grelhado`)
+   - Estufado (enum: `estufado`)
 
 5. **Tempo de Preparação** ⏱️
    - Range de minutos (mínimo até máximo)
 
 6. **Número de Porções** 👥
    - Range de porções (mínimo até máximo)
+
+> **Nota Importante:** Os valores dos enums no Supabase são **minúsculos, sem acentos**. Os valores enviados ao backend são: `facil`, `medio`, `dificil`, `padaria`, `pastelaria`, `entrada`, `sopa`, `prato principal`, `bebida`, `frito`, `assado`, `cozido`, `grelhado`, `estufado`. A interface mantém a capitalização apenas para exibição ao usuário.
 
 ## 🎨 Interface do Usuário
 
@@ -80,7 +83,8 @@ Sistema completo de filtros para a página "Other Recipes" (`/recipes/otherrecip
 **Exemplo de uso:**
 ```javascript
 await fetchOutrasReceitasWithFilters('user@example.com', {
-  dificuldade: 'Fácil',
+  dificuldade: 'facil',
+  categoria: 'entrada',
   tempo_max: 30,
   onlyMyIngredients: true
 });
@@ -149,8 +153,9 @@ npm run dev
 #### Teste 3: Múltiplos Filtros
 1. Clicar no botão "🔍 Filtros"
 2. Selecionar:
-   - Dificuldade: Fácil
-   - Categoria: Almoço
+   - Dificuldade: Fácil (envia `facil`)
+   - Categoria: Entrada (envia `entrada`)
+   - Tipo de Cozinhado: Assado (envia `assado`)
    - Tempo máximo: 45 minutos
 3. Clicar "Aplicar Filtros"
 4. ✅ Deve mostrar receitas que atendem TODOS os critérios
@@ -217,21 +222,21 @@ Frontend
 **Descrição:** Retorna receitas "outras" (não favoritas) com filtros aplicados
 
 **Query Parameters:**
-| Parâmetro | Tipo | Obrigatório | Descrição |
-|-----------|------|-------------|-----------|
-| `user_email` | string | Não | Email do usuário |
-| `dificuldade` | string | Não | Fácil, Médio, Difícil |
-| `categoria` | string | Não | Categoria da receita |
-| `tipo_cozinhado` | string | Não | Tipo de cozinhado |
-| `tempo_min` | integer | Não | Tempo mínimo (minutos) |
-| `tempo_max` | integer | Não | Tempo máximo (minutos) |
-| `porcoes_min` | integer | Não | Porções mínimas |
-| `porcoes_max` | integer | Não | Porções máximas |
-| `only_my_ingredients` | boolean | Não | Filtrar por ingredientes do usuário |
+| Parâmetro | Tipo | Obrigatório | Descrição | Valores Aceitos |
+|-----------|------|-------------|-----------|-----------------|
+| `user_email` | string | Não | Email do usuário | - |
+| `dificuldade` | string | Não | Nível de dificuldade | `facil`, `medio`, `dificil` |
+| `categoria` | string | Não | Categoria da receita | `padaria`, `pastelaria`, `entrada`, `sopa`, `prato principal`, `bebida` |
+| `tipo_cozinhado` | string | Não | Tipo de cozinhado | `frito`, `assado`, `cozido`, `grelhado`, `estufado` |
+| `tempo_min` | integer | Não | Tempo mínimo em minutos | Número inteiro positivo |
+| `tempo_max` | integer | Não | Tempo máximo em minutos | Número inteiro positivo |
+| `porcoes_min` | integer | Não | Porções mínimas | Número inteiro positivo |
+| `porcoes_max` | integer | Não | Porções máximas | Número inteiro positivo |
+| `only_my_ingredients` | boolean | Não | Filtrar por ingredientes do usuário | `true` ou `false` |
 
 **Exemplo de Request:**
 ```bash
-GET http://localhost:8000/api/v1/receitas/outras/filtradas?user_email=user@example.com&dificuldade=Fácil&tempo_max=30&only_my_ingredients=true
+GET http://localhost:8000/api/v1/receitas/outras/filtradas?user_email=user@example.com&dificuldade=facil&tempo_max=30&only_my_ingredients=true
 ```
 
 **Exemplo de Response:**
@@ -244,9 +249,9 @@ GET http://localhost:8000/api/v1/receitas/outras/filtradas?user_email=user@examp
     "tempo_preparacao": 15,
     "num_etapas": 3,
     "porcoes": 2,
-    "dificuldade": "Fácil",
-    "categoria": "Almoço",
-    "tipo_cozinhado": "Cru",
+    "dificuldade": "facil",
+    "categoria": "entrada",
+    "tipo_cozinhado": "assado",
     "imagem": "https://...",
     "calorias_totais": 150.5
   }
@@ -304,7 +309,7 @@ create table public."Receita" (
    - Filtrar por tempo_max = 20 ou 30 minutos
 
 2. **Encontrar receitas fáceis:**
-   - Filtrar por dificuldade = "Fácil"
+   - Filtrar por dificuldade = `Facil` (exibe "Fácil" na UI)
 
 3. **Maximizar uso do inventário:**
    - Marcar "Apenas ingredientes que você tem"
