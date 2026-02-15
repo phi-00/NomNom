@@ -5,6 +5,34 @@ import json
 
 router = APIRouter()
 
+# Mapping for valid grupo_alimentar ENUM values
+# These are the expected values for the Ingrediente table
+VALID_FOOD_GROUPS = {
+    'fruta': 'fruta',
+    'ovos': 'ovos',
+    'laticíneos': 'laticíneos',
+    'pescado': 'pescado',
+    'especiarias': 'especiarias',
+    'cereais': 'cereais e derivados, tuberculos',  # Normalize cereais to full name
+    'cereais e derivados, tuberculos': 'cereais e derivados, tuberculos',
+    'hortícolas': 'hortícolas',
+    'carnes': 'carne',  # Try singular form if enum uses 'carne'
+    'carne': 'carne',
+    'leguminosas': 'leguminosas',
+}
+
+def normalize_food_group(grupo: str) -> str:
+    """
+    Normaliza o valor de grupo_alimentar para o formato esperado pelo banco.
+    
+    Se o valor não for reconhecido, retorna o original e deixa o banco validar.
+    """
+    if not grupo:
+        return grupo
+    
+    grupo_lower = grupo.strip().lower()
+    return VALID_FOOD_GROUPS.get(grupo_lower, grupo)
+
 
 @router.get("/test-tables")
 async def test_table_names():
@@ -150,7 +178,45 @@ async def get_ingredientes_preview():
         )
 
 
-@router.get("")
+@router.get("/debug/valid-food-groups")
+async def debug_valid_food_groups():
+    """
+    Debug endpoint: retorna os valores válidos de grupo_alimentar
+    encontrados na tabela Ingrediente (valores únicos no banco)
+    """
+    try:
+        supabase = get_supabase_client()
+        
+        # Buscar todos os registros para extrair valores únicos de grupo_alimentar
+        response = supabase.table("Ingrediente").select("grupo_alimentar").execute()
+        
+        if response.data:
+            # Extrair valores únicos
+            unique_groups = sorted(set(item.get("grupo_alimentar") for item in response.data if item.get("grupo_alimentar")))
+            return {
+                "status": "success",
+                "valid_food_groups_in_database": unique_groups,
+                "count": len(unique_groups),
+                "total_ingredients": len(response.data),
+                "note": "Estes são os valores encontrados na base de dados. Use estes exatamente ao inserir novos ingredientes."
+            }
+        else:
+            return {
+                "status": "info",
+                "message": "Nenhum ingrediente encontrado na tabela",
+                "valid_food_groups_in_database": [],
+                "expected_values": list(set(VALID_FOOD_GROUPS.values()))
+            }
+        
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "expected_values": list(set(VALID_FOOD_GROUPS.values()))
+        }
+
+
+
 async def get_ingredientes():
     """
     Retorna todos os ingredientes com suas informações completas
@@ -174,7 +240,7 @@ async def create_ingrediente(ingredient_data: Dict[str, Any]):
     
     Params:
         - nome: nome do ingrediente
-        - grupo_alimentar: grupo alimentar (frutas, ovos, etc.)
+        - grupo_alimentar: grupo alimentar (fruta, ovos, laticíneos, pescado, especiarias, cereais, hortícolas, carne, leguminosas)
         - unidade_medida: unidade de medida (g, ml, un, etc.)
         - calorias: calorias por unidade de medida
     """
@@ -194,10 +260,14 @@ async def create_ingrediente(ingredient_data: Dict[str, Any]):
                 detail="nome e grupo_alimentar são obrigatórios"
             )
         
+        # Normalize food group value
+        normalized_grupo = normalize_food_group(grupo_alimentar)
+        print(f"Normalized grupo_alimentar: {grupo_alimentar} -> {normalized_grupo}")
+        
         # Insert new ingredient
         insert_data = {
             "nome": nome,
-            "grupo_alimentar": grupo_alimentar,
+            "grupo_alimentar": normalized_grupo,
             "unidade_medida": unidade_medida,
             "calorias": calorias
         }
@@ -218,6 +288,20 @@ async def create_ingrediente(ingredient_data: Dict[str, Any]):
         raise
     except Exception as e:
         print(f"Exception creating ingredient: {type(e).__name__}: {str(e)}")
+        
+        # Provide helpful error message if it's an enum error
+        error_msg = str(e)
+        if "invalid input value for enum" in error_msg.lower():
+            valid_groups = list(set(VALID_FOOD_GROUPS.values()))
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Grupo alimentar inválido. Valores aceitos: {', '.join(valid_groups)}"
+            )
+        
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Erro ao criar ingrediente: {str(e)}"
+        )
         import traceback
         traceback.print_exc()
         raise HTTPException(
