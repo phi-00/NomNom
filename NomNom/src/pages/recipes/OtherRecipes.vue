@@ -237,7 +237,7 @@ const goToRecipe = (recipeId) => {
 }
 
 .filter-button {
-  background: linear-gradient(135deg, var(--accent-color) 0%, #4a90e2 100%);
+  background: linear-gradient(135deg, #1ab394 0%, #15976d 100%);
   color: white;
   border: none;
   padding: 0.75rem 1.5rem;
@@ -260,7 +260,7 @@ const goToRecipe = (recipeId) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -269,7 +269,7 @@ const goToRecipe = (recipeId) => {
 }
 
 .filter-panel {
-  background: #1a1a1a;
+  background: #ffffff;
   border-radius: 16px;
   width: 90%;
   max-width: 600px;
@@ -277,7 +277,7 @@ const goToRecipe = (recipeId) => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
   border: 2px solid rgba(26, 179, 148, 0.4);
 }
 
@@ -320,7 +320,7 @@ const goToRecipe = (recipeId) => {
   padding: 1.5rem;
   overflow-y: auto;
   flex: 1;
-  background: #252525;
+  background: var(--bg-primary);
 }
 
 .filter-group {
@@ -331,7 +331,7 @@ const goToRecipe = (recipeId) => {
   display: block;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 .checkbox-label {
@@ -340,7 +340,7 @@ const goToRecipe = (recipeId) => {
   gap: 0.75rem;
   cursor: pointer;
   font-size: 1rem;
-  color: #e0e0e0;
+  color: var(--text-primary);
 }
 
 .checkbox-label input[type="checkbox"] {
@@ -358,8 +358,8 @@ const goToRecipe = (recipeId) => {
   font-size: 1rem;
   transition: border-color 0.2s;
   font-family: 'Nunito Sans';
-  background: #1a1a1a;
-  color: #e0e0e0;
+  background: var(--input-bg);
+  color: var(--text-primary);
 }
 
 .filter-group select:focus,
@@ -388,7 +388,7 @@ const goToRecipe = (recipeId) => {
   gap: 1rem;
   padding: 1.5rem;
   border-top: 2px solid rgba(26, 179, 148, 0.3);
-  background: #1a1a1a;
+  background: var(--bg-secondary);
 }
 
 .clear-button,
@@ -404,13 +404,13 @@ const goToRecipe = (recipeId) => {
 }
 
 .clear-button {
-  background: #252525;
-  color: #e0e0e0;
+  background: var(--bg-card);
+  color: var(--text-primary);
   border: 2px solid rgba(26, 179, 148, 0.3);
 }
 
 .clear-button:hover {
-  background: #1a1a1a;
+  background: var(--card-hover);
   border-color: #1ab394;
 }
 
@@ -451,7 +451,7 @@ h1 {
 }
 
 .recipe-card {
-  border: 1px solid var(--border-color);
+  border: 2px solid rgba(26, 179, 148, 0.3);
   border-radius: 12px;
   padding: 1rem;
   background: var(--bg-card);
@@ -519,12 +519,16 @@ h1 {
 }
 
 .tag {
-  display: inline-block;
-  background-color: var(--bg-secondary);
-  color: var(--accent-color);
-  padding: 4px 10px;
-  border-radius: 16px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: linear-gradient(135deg, rgba(26, 179, 148, 0.85) 0%, rgba(21, 151, 109, 0.85) 100%) !important;
+  color: white !important;
+  padding: 6px 12px !important;
+  border-radius: 50px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 8px rgba(26, 179, 148, 0.3) !important;
 }
 </style>
