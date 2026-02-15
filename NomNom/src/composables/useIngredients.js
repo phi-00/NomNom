@@ -149,6 +149,47 @@ export function useIngredients() {
     }
   };
 
+  const updateInventoryQuantity = async (userEmail, ingredientId, newQuantity) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const payload = {
+        idUtilizador: userEmail,
+        idIngrediente: Number(ingredientId),
+        quantidade: Number(newQuantity)
+      };
+      
+      const response = await apiClient.patch('/api/v1/ingredientes/inventario', payload);
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.detail || 'Erro ao atualizar quantidade';
+      console.error('Erro ao atualizar quantidade:', err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const removeFromInventory = async (userEmail, ingredientId) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await apiClient.delete('/api/v1/ingredientes/inventario', {
+        data: {
+          idUtilizador: userEmail,
+          idIngrediente: Number(ingredientId)
+        }
+      });
+      return response.data;
+    } catch (err) {
+      error.value = err.response?.data?.detail || 'Erro ao remover do inventário';
+      console.error('Erro ao remover do inventário:', err);
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
   return {
     columns,
     ingredientes,
@@ -164,5 +205,7 @@ export function useIngredients() {
     searchSimilarIngredients,
     createIngredient,
     addToInventory,
+    updateInventoryQuantity,
+    removeFromInventory,
   };
 }
