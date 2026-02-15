@@ -247,7 +247,7 @@
     { title: 'Vegetables', grupo_alimentar: 'horticulas', value: '5' },
     { title: 'Fruit', grupo_alimentar: 'fruta', value: '6' },
     { title: 'Fats and Oils', grupo_alimentar: 'gorduras e óleos', value: '7' },
-    { title: 'Dairy', grupo_alimentar: 'laticínios', value: '8' },
+    { title: 'Dairy', grupo_alimentar: 'laticíneos', value: '8' },
     { title: 'Legumes', grupo_alimentar: 'leguminosas', value: '9' },
     { title: 'Spices', grupo_alimentar: 'especiarias', value: '10' },
     { title: 'Water', grupo_alimentar: 'água', value: '11' },
