@@ -78,7 +78,7 @@ watch(() => route.path, () => {
 
 .navbar {
   background: var(--navbar-bg);
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 3px solid #1ab394;
   padding: 1rem 2rem;
   font-family: 'Nunito Sans', sans-serif;
   display: flex;
